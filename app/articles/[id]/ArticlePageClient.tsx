@@ -19,9 +19,30 @@ export default function ArticlePageClient({ article, relatedArticles }: ArticleP
   const [showFloatingButton, setShowFloatingButton] = useState(false);
 
   const handleBack = () => {
-    // 尝试返回上一页，如果没有历史记录则返回首页
-    if (typeof window !== 'undefined' && window.history.length > 1) {
-      router.back();
+    // 智能返回：根据来源智能选择返回目标
+    if (typeof window !== 'undefined') {
+      try {
+        // 检查浏览器历史记录
+        if (window.history.length > 1) {
+          // 检查来源页面
+          const referrer = document.referrer;
+          const currentOrigin = window.location.origin;
+          
+          // 如果是从本站的其他页面来的，直接返回
+          if (referrer && referrer.startsWith(currentOrigin)) {
+            router.back();
+          } else {
+            // 否则返回首页（防止返回到外部网站）
+            router.push('/');
+          }
+        } else {
+          // 没有历史记录，返回首页
+          router.push('/');
+        }
+      } catch (error) {
+        // 异常情况，返回首页
+        router.push('/');
+      }
     } else {
       router.push('/');
     }
@@ -82,15 +103,15 @@ export default function ArticlePageClient({ article, relatedArticles }: ArticleP
       <Header />
       
       <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Back Button - 优化版本 */}
+        {/* Back Button - 简洁版本 */}
         <div className="mb-8">
           <Button
-            variant="outline"
+            variant="secondary"
             onClick={handleBack}
-            className="group bg-white/90 backdrop-blur-sm border-2 border-purple-200 text-purple-700 hover:text-white hover:bg-purple-600 hover:border-purple-600 rounded-2xl px-8 py-4 text-lg font-medium shadow-lg hover:shadow-xl transition-all duration-300 ease-in-out transform hover:scale-105 active:scale-95 min-w-[140px] sm:min-w-[160px] touch-manipulation select-none"
+            className="bg-purple-100 text-purple-700 rounded-2xl px-4 py-2 font-medium hover:bg-purple-200 transition-colors"
           >
-            <ArrowLeft className="h-6 w-6 mr-3 transition-transform duration-300 group-hover:-translate-x-1" />
-            <span className="font-semibold">返回上页</span>
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            返回上页
           </Button>
         </div>
 
@@ -210,12 +231,12 @@ export default function ArticlePageClient({ article, relatedArticles }: ArticleP
       {/* 悬浮返回按钮 */}
       {showFloatingButton && (
         <div className="fixed bottom-6 right-6 z-50 sm:bottom-8 sm:right-8">
-                      <Button
-              onClick={handleBack}
-              className="group bg-purple-600 hover:bg-purple-700 text-white rounded-full p-4 sm:p-5 shadow-2xl hover:shadow-purple-500/25 transition-all duration-300 ease-in-out transform hover:scale-110 active:scale-95 border-4 border-white/20 min-w-[56px] min-h-[56px] sm:min-w-[64px] sm:min-h-[64px] touch-manipulation select-none"
-              size="lg"
-            >
-            <ArrowLeft className="h-6 w-6 sm:h-7 sm:w-7 transition-transform duration-300 group-hover:-translate-x-1" />
+          <Button
+            onClick={handleBack}
+            className="bg-purple-600 hover:bg-purple-700 text-white rounded-full p-3 shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 active:scale-95"
+            size="lg"
+          >
+            <ArrowLeft className="h-5 w-5" />
           </Button>
         </div>
       )}
