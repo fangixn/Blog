@@ -11,6 +11,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import KnowledgeGraph from '@/components/KnowledgeGraph';
 import EcosystemIntegration from '@/components/EcosystemIntegration';
+import AIAssistant from '@/components/AIAssistant';
 import { type Article } from '@/lib/data';
 import { useRouter } from 'next/navigation';
 
@@ -104,6 +105,14 @@ export default function KnowledgeBaseClient({ articles }: KnowledgeBaseClientPro
       article.tags.some(tag => tag.toLowerCase().includes(query))
     );
   }, [articles, searchQuery]);
+
+  // 当有搜索查询时，自动切换到搜索标签页
+  const handleSearchChange = (value: string) => {
+    setSearchQuery(value);
+    if (value.trim() && activeTab !== 'search') {
+      setActiveTab('search');
+    }
+  };
 
   // 按模块分类文章
   const categorizedArticles = useMemo(() => {
@@ -229,22 +238,42 @@ export default function KnowledgeBaseClient({ articles }: KnowledgeBaseClientPro
                 type="text"
                 placeholder="🔍 搜索知识库：理论、学者、著作、概念..."
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 pr-4 py-3 rounded-2xl border-purple-200 focus:border-purple-400 focus:ring-purple-300 w-full text-center"
+                onChange={(e) => handleSearchChange(e.target.value)}
+                className="pl-10 pr-12 py-3 rounded-2xl border-purple-200 focus:border-purple-400 focus:ring-purple-300 w-full text-center"
               />
+              {searchQuery && (
+                <button
+                  onClick={() => {
+                    setSearchQuery('');
+                    setActiveTab('overview');
+                  }}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                  title="清空搜索"
+                >
+                  ✕
+                </button>
+              )}
             </div>
             
             {!searchQuery && (
               <p className="text-sm text-gray-500 mt-3 text-center">
-                💡 支持搜索：文章标题、内容、标签
+                💡 支持搜索：文章标题、内容、标签（如"卡尼曼"、"学者"、"经济学"等）
+              </p>
+            )}
+            
+            {searchQuery && (
+              <p className="text-sm text-purple-600 mt-3 text-center">
+                正在搜索 "{searchQuery}"，找到 {filteredArticles.length} 篇相关文章
+                {filteredArticles.length > 0 && "，已自动切换到搜索结果页面"}
               </p>
             )}
           </div>
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-8">
-          <TabsList className="grid w-full grid-cols-5 rounded-3xl p-2 h-16 max-w-5xl mx-auto glass-effect border border-white/20 shadow-lg">
+          <TabsList className="grid w-full grid-cols-6 rounded-3xl p-2 h-16 max-w-6xl mx-auto glass-effect border border-white/20 shadow-lg">
             <TabsTrigger value="overview" className="rounded-2xl font-medium">🗺️ 知识地图</TabsTrigger>
+            <TabsTrigger value="ai-assistant" className="rounded-2xl font-medium">🤖 AI助手</TabsTrigger>
             <TabsTrigger value="ecosystem" className="rounded-2xl font-medium">🌐 生态协同</TabsTrigger>
             <TabsTrigger value="graph" className="rounded-2xl font-medium">🕸️ 关联图谱</TabsTrigger>
             <TabsTrigger value="search" className="rounded-2xl font-medium">🔍 搜索浏览</TabsTrigger>
@@ -391,6 +420,11 @@ export default function KnowledgeBaseClient({ articles }: KnowledgeBaseClientPro
             </div>
           </TabsContent>
 
+          {/* AI助手视图 */}
+          <TabsContent value="ai-assistant" className="space-y-8">
+            <AIAssistant articles={articles} />
+          </TabsContent>
+
           {/* 生态系统协同视图 */}
           <TabsContent value="ecosystem" className="space-y-8">
             <EcosystemIntegration />
@@ -411,6 +445,25 @@ export default function KnowledgeBaseClient({ articles }: KnowledgeBaseClientPro
                 <p className="text-lg text-gray-600">
                   找到 <span className="font-semibold text-purple-600">{filteredArticles.length}</span> 篇相关文章
                 </p>
+              </div>
+            )}
+            
+            {searchQuery && filteredArticles.length === 0 && (
+              <div className="text-center py-16">
+                <div className="text-6xl mb-4">🔍</div>
+                <h3 className="text-xl font-semibold text-gray-900 mb-4">没有找到相关内容</h3>
+                <p className="text-gray-600 mb-6">
+                  抱歉，没有找到与 "{searchQuery}" 相关的文章。
+                </p>
+                <div className="bg-purple-50 rounded-2xl p-6 max-w-md mx-auto">
+                  <p className="text-sm text-gray-600 mb-4">💡 搜索建议：</p>
+                  <ul className="text-sm text-gray-600 space-y-2 text-left">
+                    <li>• 尝试使用不同的关键词</li>
+                    <li>• 检查拼写是否正确</li>
+                    <li>• 使用更通用的搜索词</li>
+                    <li>• 尝试搜索"学者"、"经济学"、"理论"等</li>
+                  </ul>
+                </div>
               </div>
             )}
             
