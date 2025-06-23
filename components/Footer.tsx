@@ -105,22 +105,7 @@ export default function Footer() {
         {/* Divider */}
         <div className="border-t border-gray-800 my-12"></div>
 
-        {/* Newsletter CTA */}
-        <div className="text-center mb-12">
-          <div className="bg-gradient-to-r from-purple-600/20 to-pink-600/20 rounded-xl p-6 border border-purple-600/30">
-            <h4 className="text-xl font-semibold mb-3">保持联系</h4>
-            <p className="text-gray-300 mb-4">
-              订阅我的博客，第一时间获取最新的经济学思考和技术分享
-            </p>
-            <Button
-              variant="outline"
-              className="border-purple-600 text-purple-400 hover:bg-purple-600 hover:text-white transition-all duration-300"
-              onClick={() => document.getElementById('newsletter')?.scrollIntoView({ behavior: 'smooth' })}
-            >
-              立即订阅
-            </Button>
-          </div>
-        </div>
+
 
         {/* Bottom Section */}
         <div className="flex flex-col md:flex-row items-center justify-between pt-8 border-t border-gray-800">
@@ -135,9 +120,7 @@ export default function Footer() {
           </div>
 
           <div className="flex items-center space-x-4 text-sm text-gray-400">
-            <span>fangin1230@gmail.com</span>
-            <span>·</span>
-            <span>2025</span>
+            <span>fangxin1230.com</span>
           </div>
         </div>
       </div>

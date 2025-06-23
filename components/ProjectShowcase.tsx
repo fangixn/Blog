@@ -217,15 +217,8 @@ export default function ProjectShowcase() {
               有想法？让我们一起探讨
             </h3>
             <p className="text-gray-600 mb-6">
-              如果你对这些项目感兴趣，或者有合作想法，欢迎随时联系我
+              这些项目展示了经济学理论与技术实践的结合，希望能为学术研究和实际应用带来价值
             </p>
-            <Button
-              size="lg"
-              className="bg-purple-600 hover:bg-purple-700 text-white px-8 py-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300"
-              onClick={() => window.open('mailto:fangin1230@gmail.com')}
-            >
-              开始对话
-            </Button>
           </div>
         </div>
       </div>

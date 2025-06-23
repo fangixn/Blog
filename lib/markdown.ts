@@ -3,6 +3,27 @@ import { Article } from './data';
 // 预加载的文章数据 - 在构建时生成
 const preloadedArticles: Article[] = [];
 
+// 简单的markdown到HTML转换（基础版本）
+function simpleMarkdownToHtml(markdown: string): string {
+  return markdown
+    // 标题
+    .replace(/^### (.*$)/gim, '<h3>$1</h3>')
+    .replace(/^## (.*$)/gim, '<h2>$1</h2>')
+    .replace(/^# (.*$)/gim, '<h1>$1</h1>')
+    // 粗体和斜体
+    .replace(/\*\*(.*)\*\*/gim, '<strong>$1</strong>')
+    .replace(/\*(.*)\*/gim, '<em>$1</em>')
+    // 链接
+    .replace(/\[([^\]]*)\]\(([^)]*)\)/gim, '<a href="$2">$1</a>')
+    // 段落
+    .replace(/\n\n/gim, '</p><p>')
+    .replace(/^(?!<[h1-6]|<\/|<p)/gim, '<p>')
+    .replace(/$/gim, '</p>')
+    .replace(/<p><\/p>/gim, '')
+    .replace(/<p>(<h[1-6])/gim, '$1')
+    .replace(/(<\/h[1-6]>)<\/p>/gim, '$1');
+}
+
 // 在服务器端获取所有markdown文章
 export function getAllMarkdownArticles(): Article[] {
   // 只在服务器端运行
@@ -12,8 +33,6 @@ export function getAllMarkdownArticles(): Article[] {
       const fs = eval('require')('fs');
       const path = eval('require')('path');
       const matter = eval('require')('gray-matter');
-      const { remark } = eval('require')('remark');
-      const html = eval('require')('remark-html');
 
       const articlesDirectory = path.join(process.cwd(), 'content/articles');
 
@@ -34,29 +53,25 @@ export function getAllMarkdownArticles(): Article[] {
           // 解析front matter
           const matterResult = matter(fileContents);
           
-          // 处理markdown内容为HTML
-          const processedContent = remark()
-            .use(html)
-            .processSync(matterResult.content);
-          
-          const contentHtml = processedContent.toString();
+          // 使用简单的markdown转换
+          const contentHtml = simpleMarkdownToHtml(matterResult.content);
           
           return {
             id: `md-${fileName.replace('.md', '')}`,
             title: matterResult.data.title || fileName.replace('.md', ''),
-            excerpt: matterResult.data.excerpt || contentHtml.substring(0, 200).replace(/<[^>]*>/g, '') + '...',
+            excerpt: matterResult.data.excerpt || matterResult.content.substring(0, 200).replace(/[#*\[\]]/g, '') + '...',
             content: contentHtml,
             category: matterResult.data.category || 'thoughts',
             tags: Array.isArray(matterResult.data.tags) ? matterResult.data.tags : [],
             publishedAt: matterResult.data.publishedAt || new Date().toISOString().split('T')[0],
-            readTime: matterResult.data.readTime || Math.ceil(contentHtml.length / 1000),
+            readTime: matterResult.data.readTime || Math.ceil(matterResult.content.length / 1000),
             featured: Boolean(matterResult.data.featured),
           };
         } catch (fileError) {
           console.error(`处理文件 ${fileName} 时出错:`, fileError);
           return null;
         }
-              }).filter((article: Article | null): article is Article => article !== null);
+      }).filter((article: Article | null): article is Article => article !== null);
       
       return articles;
     } catch (error) {

@@ -20,7 +20,7 @@ export default function Header() {
     { name: '文章', href: '#articles' },
     { name: '项目', href: '#projects' },
     { name: '关于', href: '#about' },
-    { name: '联系', href: '#contact' },
+
   ];
 
   return (

@@ -6,7 +6,7 @@ import CategoryNav from '@/components/CategoryNav';
 import ArticleGrid from '@/components/ArticleGrid';
 import ProjectShowcase from '@/components/ProjectShowcase';
 import About from '@/components/About';
-import Newsletter from '@/components/Newsletter';
+
 import Footer from '@/components/Footer';
 
 export default function Home() {
@@ -30,9 +30,6 @@ export default function Home() {
         />
         <ProjectShowcase />
         <About />
-        <div id="newsletter">
-          <Newsletter />
-        </div>
       </main>
       <Footer />
     </div>

@@ -190,15 +190,8 @@ export default function ArticleGrid({ selectedCategory, selectedTags }: ArticleG
         {filteredArticles.length > 0 && (
           <div className="text-center mt-16 p-6 bg-gradient-to-r from-purple-50 to-blue-50 rounded-xl">
             <p className="text-gray-700 font-medium">
-              如果你喜欢这些文章，欢迎与我联系
+              持续分享有价值的内容，感谢您的阅读
             </p>
-            <Button
-              variant="ghost"
-              className="mt-2 text-purple-600 hover:text-purple-700"
-              onClick={() => window.open('mailto:fangin1230@gmail.com')}
-            >
-              fangin1230@gmail.com
-            </Button>
           </div>
         )}
       </div>
