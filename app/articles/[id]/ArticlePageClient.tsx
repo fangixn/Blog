@@ -165,7 +165,7 @@ export default function ArticlePageClient({ article, relatedArticles }: ArticleP
                 <Card 
                   key={relatedArticle.id} 
                   className="cursor-pointer hover:shadow-lg transition-all duration-300 border-0 shadow-md hover:shadow-purple-200/40 rounded-3xl overflow-hidden"
-                  onClick={() => router.push(`/articles/${relatedArticle.id}`)}
+                  onClick={() => router.push(`/articles/${encodeURIComponent(relatedArticle.id)}`)}
                 >
                   <CardContent className="p-6">
                     <Badge 

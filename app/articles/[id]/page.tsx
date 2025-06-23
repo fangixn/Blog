@@ -15,7 +15,7 @@ export async function generateStaticParams() {
   const markdownArticles = getAllMarkdownArticles();
   
   return markdownArticles.map((article) => ({
-    id: encodeURIComponent(article.id),
+    id: article.id, // 直接使用文章ID，不需要重新编码
   }));
 }
 
@@ -61,7 +61,7 @@ export default function ArticlePage({ params }: ArticlePageProps) {
                   size="lg"
                   className="apple-hover border-2 border-purple-300 hover:border-purple-400 text-purple-700 hover:text-purple-800 hover:bg-purple-50 font-medium px-8 py-4 rounded-2xl backdrop-blur-sm bg-white/60"
                 >
-                  📚 浏览知识库
+                  浏览知识库
                 </Button>
               </Link>
             </div>
