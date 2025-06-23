@@ -17,6 +17,15 @@
 - **知识图谱**：可视化展示知识点之间的关联关系
 - **分类浏览**：按学科、主题等维度组织知识内容
 - **智能搜索**：支持全文搜索和语义搜索
+- **AI智能助手**：基于知识库内容的智能问答系统
+
+### 🤖 AI助手功能
+- **智能对话**：基于博客知识库的AI问答助手
+- **多模型支持**：支持OpenAI GPT和DeepSeek等多个AI服务商
+- **配置管理**：一次配置API密钥，永久使用AI功能
+- **知识问答**：专业的经济学概念解答和学习建议
+- **预设问题**：常见经济学问题快速提问
+- **上下文理解**：结合博客文章内容进行精准回答
 
 ### 🎨 现代化界面
 - **Apple 风格设计**：简洁优雅的用户界面
@@ -46,6 +55,12 @@
 - **Gray Matter**：Markdown 文件解析
 - **Remark & Rehype**：Markdown 到 HTML 转换
 - **Date-fns**：日期处理工具
+
+### AI服务集成
+- **OpenAI API**：ChatGPT智能问答服务
+- **DeepSeek API**：国产大模型服务
+- **本地存储**：API密钥安全管理
+- **智能降级**：多服务商自动切换
 
 ### 开发工具
 - **ESLint**：代码规范检查
@@ -99,6 +114,9 @@ npm start
 Blog/
 ├── app/                      # Next.js App Router
 │   ├── api/                 # API 路由
+│   │   ├── ai-chat/         # AI助手API
+│   │   │   ├── route.ts     # 聊天接口
+│   │   │   └── test/        # API密钥测试
 │   │   ├── articles/        # 文章相关 API
 │   │   └── update-images/   # 图片更新 API
 │   ├── articles/[id]/       # 动态文章页面
@@ -108,6 +126,8 @@ Blog/
 │   └── page.tsx             # 首页
 ├── components/              # React 组件
 │   ├── ui/                  # shadcn/ui 组件
+│   ├── AIAssistant.tsx      # AI助手组件
+│   ├── AISettings.tsx       # AI设置管理
 │   ├── About.tsx            # 关于组件
 │   ├── ArticleGrid.tsx      # 文章网格
 │   ├── Header.tsx           # 头部导航
@@ -120,6 +140,7 @@ Blog/
 │   ├── markdown.ts          # Markdown 解析
 │   ├── utils.ts             # 通用工具
 │   └── ...
+├── apiConfig.ts             # AI服务配置模板
 ├── scripts/                 # 自动化脚本
 │   ├── new-article.js       # 新文章创建
 │   └── update-images.js     # 图片更新
@@ -195,8 +216,36 @@ node scripts/update-images.js
 # Google Analytics (可选)
 NEXT_PUBLIC_GA_ID=your-ga-id
 
+# AI助手服务密钥 (可选，也可在前端配置)
+OPENAI_API_KEY=your-openai-api-key
+DEEPSEEK_API_KEY=your-deepseek-api-key
+
 # 其他配置...
 ```
+
+### AI助手配置
+AI助手支持两种配置方式：
+
+#### 方式一：环境变量配置（开发者）
+适合开发者统一配置，用户无需额外设置：
+
+```env
+OPENAI_API_KEY=sk-xxx...
+DEEPSEEK_API_KEY=sk-xxx...
+```
+
+#### 方式二：前端用户配置（推荐）
+用户在网站上自行配置API密钥：
+
+1. 访问知识库页面的"🤖 AI助手"标签
+2. 点击右上角设置按钮
+3. 输入您的API密钥
+4. 测试连接并保存配置
+5. 开始使用AI助手功能
+
+**获取API密钥：**
+- OpenAI：[https://platform.openai.com/api-keys](https://platform.openai.com/api-keys)
+- DeepSeek：[https://platform.deepseek.com/api_keys](https://platform.deepseek.com/api_keys)
 
 ### SEO 配置
 在 `app/layout.tsx` 中修改网站元信息：
@@ -209,12 +258,39 @@ export const metadata: Metadata = {
 };
 ```
 
+## 🔮 未来规划
+
+### EconAI 生态系统集成
+我们计划将博客与 [EconAI](https://econai.com) 深度集成，构建完整的经济学学习生态：
+
+#### 🎯 近期目标
+- **智能推荐**：基于用户阅读历史和AI分析推荐相关文章
+- **知识图谱增强**：结合EconAI的知识库扩展文章关联性
+- **学习路径规划**：为不同水平的读者制定个性化学习计划
+
+#### 🚀 中期目标
+- **专业问答升级**：接入EconAI的专业经济学问答能力
+- **论文推荐系统**：基于文章内容推荐相关学术论文
+- **互动学习工具**：经济学概念测试、案例分析等
+
+#### 🌟 长期愿景
+- **学术社区集成**：连接EconAI学术社区，促进学者交流
+- **智能写作助手**：AI辅助经济学文章创作和审校
+- **多语言支持**：国际化的经济学知识传播平台
+
+### 技术演进路线
+1. **基础AI助手** ✅ (当前阶段)
+2. **EconAI API集成** 🚧 (开发中)
+3. **智能推荐引擎** 📋 (规划中)
+4. **完整生态集成** 🎯 (未来目标)
+
 ## 📚 开发文档
 
 详细的开发文档请查看：
 - [Markdown 使用指南](./README-MARKDOWN.md)
 - [知识库系统](./README-KNOWLEDGE-BASE.md)
 - [图片自动更新](./README-AUTO-IMAGES.md)
+- [AI助手开发指南](./README-AI-ASSISTANT.md) 📝 (待完善)
 
 ## 🤝 贡献指南
 
@@ -238,11 +314,14 @@ export const metadata: Metadata = {
 
 ## 🙏 致谢
 
-感谢以下开源项目：
+感谢以下开源项目和服务：
 - [Next.js](https://nextjs.org/) - React 全栈框架
 - [Tailwind CSS](https://tailwindcss.com/) - CSS 框架
 - [shadcn/ui](https://ui.shadcn.com/) - 组件库
 - [Lucide](https://lucide.dev/) - 图标库
+- [OpenAI](https://openai.com/) - AI服务提供商
+- [DeepSeek](https://deepseek.com/) - 国产AI大模型
+- [EconAI](https://econai.com) - 经济学AI生态合作伙伴
 
 ---
 
