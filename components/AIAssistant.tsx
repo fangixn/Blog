@@ -16,6 +16,13 @@ interface Message {
   role: 'user' | 'assistant';
   content: string;
   timestamp: Date;
+  compareResults?: {
+    provider: string;
+    success: boolean;
+    content?: string;
+    error?: string;
+  }[];
+  isCompareMode?: boolean;
 }
 
 interface AIAssistantProps {
@@ -117,6 +124,22 @@ export default function AIAssistant({ articles }: AIAssistantProps) {
       if (compareMode) {
         // 对比模式
         result = await compareChat(apiKeys, inputMessage, KNOWLEDGE_BASE);
+        
+        const assistantMessage: Message = {
+          id: (Date.now() + 1).toString(),
+          role: 'assistant',
+          content: '',
+          timestamp: new Date(),
+          isCompareMode: true,
+          compareResults: result.results?.map((res: any) => ({
+            provider: res.provider,
+            success: res.success,
+            content: res.content,
+            error: res.error
+          })) || []
+        };
+
+        setMessages(prev => [...prev, assistantMessage]);
       } else {
         // 单一模式：选择优先级最高的可用提供商
         const availableProviders = Object.keys(AI_PROVIDERS).filter(provider => apiKeys[provider]);
@@ -138,44 +161,28 @@ export default function AIAssistant({ articles }: AIAssistantProps) {
         } else if (result.success) {
           result.provider = AI_PROVIDERS[primaryProvider].name;
         }
-      }
-      
-      let assistantContent = '';
-      
-      if (result.compareMode) {
-        // 对比模式响应
-        assistantContent = '🔍 **多AI对比回答**\n\n';
-        result.results?.forEach((res: any) => {
-          if (res.success) {
-            assistantContent += `**${res.provider}:**\n${res.content}\n\n`;
-          } else {
-            assistantContent += `**${res.provider}:** ❌ ${res.error}\n\n`;
-          }
-        });
-        assistantContent += `📊 成功: ${result.summary?.successful}/${result.summary?.total}`;
-      } else {
-        // 单一模式响应
+        
         if (!result.success) {
           throw new Error(result.error || 'AI助手暂时无法回答，请稍后再试');
         }
         
-        assistantContent = result.content;
+        let assistantContent = result.content;
         if (result.provider) {
           assistantContent += `\n\n*由 ${result.provider} 提供回答*`;
           if (result.isBackup) {
             assistantContent += ` (备用)`;
           }
         }
-      }
-      
-      const assistantMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        role: 'assistant',
-        content: assistantContent,
-        timestamp: new Date()
-      };
+        
+        const assistantMessage: Message = {
+          id: (Date.now() + 1).toString(),
+          role: 'assistant',
+          content: assistantContent,
+          timestamp: new Date()
+        };
 
-      setMessages(prev => [...prev, assistantMessage]);
+        setMessages(prev => [...prev, assistantMessage]);
+      }
     } catch (error: any) {
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
@@ -301,37 +308,95 @@ export default function AIAssistant({ articles }: AIAssistantProps) {
       {/* 聊天记录 */}
       <div className="space-y-4 mb-6 max-h-96 overflow-y-auto">
         {messages.map((message) => (
-          <div
-            key={message.id}
-            className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
-          >
-            <div
-              className={`max-w-xs lg:max-w-md px-4 py-3 rounded-2xl ${
-                message.role === 'user'
-                  ? 'bg-purple-600 text-white'
-                  : 'bg-white border border-gray-200 text-gray-900'
-              }`}
-            >
-              <div className="flex items-start space-x-2">
-                {message.role === 'assistant' && (
-                  <Bot className="h-4 w-4 mt-1 flex-shrink-0 text-purple-600" />
-                )}
-                {message.role === 'user' && (
-                  <User className="h-4 w-4 mt-1 flex-shrink-0 text-white" />
-                )}
-                <div className="flex-1">
-                  <p className="text-sm whitespace-pre-wrap">{message.content}</p>
-                  <p className={`text-xs mt-2 ${
-                    message.role === 'user' ? 'text-purple-200' : 'text-gray-500'
-                  }`}>
-                    {message.timestamp.toLocaleTimeString('zh-CN', { 
-                      hour: '2-digit', 
-                      minute: '2-digit' 
-                    })}
-                  </p>
+          <div key={message.id}>
+            {/* 用户消息 */}
+            {message.role === 'user' && (
+              <div className="flex justify-end">
+                <div className="max-w-xs lg:max-w-md px-4 py-3 rounded-2xl bg-purple-600 text-white">
+                  <div className="flex items-start space-x-2">
+                    <User className="h-4 w-4 mt-1 flex-shrink-0 text-white" />
+                    <div className="flex-1">
+                      <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                      <p className="text-xs mt-2 text-purple-200">
+                        {message.timestamp.toLocaleTimeString('zh-CN', { 
+                          hour: '2-digit', 
+                          minute: '2-digit' 
+                        })}
+                      </p>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
+
+            {/* AI回答 - 对比模式 */}
+            {message.role === 'assistant' && message.isCompareMode && (
+              <div className="space-y-3">
+                <div className="flex items-center space-x-2 text-sm text-gray-600 mb-3">
+                  <GitCompare className="h-4 w-4" />
+                  <span>多AI对比回答</span>
+                  <Badge variant="outline" className="text-xs">
+                    {message.compareResults?.filter(r => r.success).length || 0}/{message.compareResults?.length || 0} 成功
+                  </Badge>
+                </div>
+                
+                {message.compareResults?.map((result, index) => (
+                  <Card key={index} className="border border-gray-200 rounded-2xl overflow-hidden">
+                    <CardHeader className="pb-2 bg-gray-50">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-2">
+                          <Bot className="h-4 w-4 text-purple-600" />
+                          <span className="font-medium text-sm">{result.provider}</span>
+                        </div>
+                        <Badge 
+                          variant={result.success ? "default" : "destructive"}
+                          className="text-xs"
+                        >
+                          {result.success ? "成功" : "失败"}
+                        </Badge>
+                      </div>
+                    </CardHeader>
+                    <CardContent className="pt-2">
+                      {result.success ? (
+                        <p className="text-sm text-gray-900 whitespace-pre-wrap">
+                          {result.content}
+                        </p>
+                      ) : (
+                        <p className="text-sm text-red-600">
+                          ❌ {result.error}
+                        </p>
+                      )}
+                      <p className="text-xs text-gray-500 mt-2">
+                        {message.timestamp.toLocaleTimeString('zh-CN', { 
+                          hour: '2-digit', 
+                          minute: '2-digit' 
+                        })}
+                      </p>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            )}
+
+            {/* AI回答 - 单一模式 */}
+            {message.role === 'assistant' && !message.isCompareMode && (
+              <div className="flex justify-start">
+                <div className="max-w-xs lg:max-w-md px-4 py-3 rounded-2xl bg-white border border-gray-200 text-gray-900">
+                  <div className="flex items-start space-x-2">
+                    <Bot className="h-4 w-4 mt-1 flex-shrink-0 text-purple-600" />
+                    <div className="flex-1">
+                      <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                      <p className="text-xs mt-2 text-gray-500">
+                        {message.timestamp.toLocaleTimeString('zh-CN', { 
+                          hour: '2-digit', 
+                          minute: '2-digit' 
+                        })}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         ))}
         
