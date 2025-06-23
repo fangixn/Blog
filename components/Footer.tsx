@@ -35,7 +35,7 @@ export default function Footer() {
                 方馨的博客
               </a>
               <p className="text-gray-400 text-lg font-medium mb-4">
-                思想的记录器，代码的操作者
+                用文字和代码，构建理想中的乌托邦
               </p>
               <p className="text-gray-300 leading-relaxed max-w-md">
                 在这里分享经济学思考、技术学习心得、创新项目展示，

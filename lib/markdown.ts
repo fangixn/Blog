@@ -15,6 +15,8 @@ function simpleMarkdownToHtml(markdown: string): string {
     .replace(/^### (.*$)/gim, '<h3>$1</h3>')
     .replace(/^## (.*$)/gim, '<h2>$1</h2>')
     .replace(/^# (.*$)/gim, '<h1>$1</h1>')
+    // 图片（必须在链接之前处理，避免冲突）
+    .replace(/!\[([^\]]*)\]\(([^)]*)\)/gim, '<img src="$2" alt="$1" class="mx-auto my-6 rounded-2xl shadow-lg max-w-full h-auto" />')
     // 粗体和斜体
     .replace(/\*\*(.*?)\*\*/gim, '<strong>$1</strong>')
     .replace(/\*(.*?)\*/gim, '<em>$1</em>')
@@ -31,7 +33,8 @@ function simpleMarkdownToHtml(markdown: string): string {
       paragraph = paragraph.trim();
       if (!paragraph) return '';
       if (paragraph.startsWith('<h') || paragraph.startsWith('<ul') || 
-          paragraph.startsWith('<pre') || paragraph.startsWith('<blockquote')) {
+          paragraph.startsWith('<pre') || paragraph.startsWith('<blockquote') || 
+          paragraph.startsWith('<img')) {
         return paragraph;
       }
       return `<p>${paragraph}</p>`;

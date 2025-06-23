@@ -19,9 +19,9 @@ export default function Hero() {
       <div className="max-w-5xl mx-auto text-center relative z-10">
         <div className="animate-fade-in">
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight">
-            思想的记录器<br />
+          用文字和代码<br />
             <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-              代码的操作者
+              构建理想中的乌托邦
             </span>
           </h1>
           

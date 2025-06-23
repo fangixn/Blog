@@ -19,13 +19,8 @@ export default function ArticlePageClient({ article, relatedArticles }: ArticleP
 
   const handleBack = () => {
     // 尝试返回上一页，如果没有历史记录则返回首页
-    if (typeof window !== 'undefined') {
-      const referrer = document.referrer;
-      if (referrer && referrer.includes(window.location.origin)) {
-        router.back();
-      } else {
-        router.push('/');
-      }
+    if (typeof window !== 'undefined' && window.history.length > 1) {
+      router.back();
     } else {
       router.push('/');
     }
