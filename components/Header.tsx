@@ -2,10 +2,13 @@
 import { useState, useEffect } from 'react';
 import { Menu, X, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import LanguageSwitcher from '@/components/LanguageSwitcher';
+import { Language, defaultLanguage } from '@/lib/i18n';
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [currentLanguage, setCurrentLanguage] = useState<Language>(defaultLanguage);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -56,12 +59,19 @@ export default function Header() {
             ))}
           </nav>
 
-          {/* Search & Mobile Menu */}
+          {/* Language Switcher, Search & Mobile Menu */}
           <div className="flex items-center space-x-4">
+            {/* Language Switcher */}
+            <LanguageSwitcher 
+              currentLanguage={currentLanguage}
+              onLanguageChange={setCurrentLanguage}
+            />
+            
             <Button
               variant="ghost"
               size="sm"
               className="hidden sm:flex items-center space-x-2 text-gray-600 hover:text-purple-600 hover:bg-purple-50 rounded-xl transition-all duration-300"
+              onClick={() => document.getElementById('articles')?.scrollIntoView({ behavior: 'smooth' })}
             >
               <Search className="h-4 w-4" />
               <span className="text-sm">搜索</span>
@@ -97,15 +107,30 @@ export default function Header() {
                   {item.name}
                 </a>
               ))}
-              <div className="px-2 pt-2">
+              <div className="px-2 pt-2 space-y-2">
                 <Button
                   variant="ghost"
                   size="sm"
                   className="w-full justify-start text-gray-600 hover:text-purple-600 hover:bg-purple-50 rounded-xl transition-all duration-300"
+                  onClick={() => {
+                    setIsMenuOpen(false);
+                    document.getElementById('articles')?.scrollIntoView({ behavior: 'smooth' });
+                  }}
                 >
                   <Search className="h-4 w-4 mr-2" />
                   搜索文章
                 </Button>
+                
+                {/* 移动端语言切换器 */}
+                <div className="px-2">
+                  <LanguageSwitcher 
+                    currentLanguage={currentLanguage}
+                    onLanguageChange={(lang) => {
+                      setCurrentLanguage(lang);
+                      setIsMenuOpen(false);
+                    }}
+                  />
+                </div>
               </div>
             </div>
           </div>

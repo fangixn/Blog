@@ -51,14 +51,18 @@ export default function Footer() {
                 <Mail className="h-5 w-5 group-hover:scale-110 transition-transform" />
               </a>
               <a
-                href="#"
+                href="https://github.com/fangixn"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-purple-600 transition-colors duration-200 group"
                 title="GitHub"
               >
                 <Github className="h-5 w-5 group-hover:scale-110 transition-transform" />
               </a>
               <a
-                href="#"
+                href="https://www.linkedin.com/in/fangxin1230"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-purple-600 transition-colors duration-200 group"
                 title="领英"
               >

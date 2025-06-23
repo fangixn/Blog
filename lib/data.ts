@@ -1,5 +1,4 @@
-// 引入Markdown处理功能
-import { getAllMarkdownArticles } from './markdown';
+// 客户端不使用markdown模块，避免fs依赖问题
 
 export interface Article {
   id: string;
@@ -32,7 +31,7 @@ export const categories = [
   { id: 'thoughts', name: '随笔杂谈', icon: 'PenTool' },
 ];
 
-// 静态文章数据（作为备份或特殊文章）
+// 静态文章数据（按发布时间排序，统一ID格式）
 export const articles: Article[] = [
   {
     id: '1',
@@ -87,6 +86,60 @@ export const articles: Article[] = [
     tags: ['经济学', '书单', '学术著作', '经济学理论', '必读书籍'],
     publishedAt: '2024-03-01',
     readTime: 15,
+    featured: true,
+  },
+  {
+    id: '3',
+    title: '100位经济学领域关键学者',
+    excerpt: '从古希腊苏格拉底到现代经济学前沿，纵览百位经济学思想巨匠的智慧传承与理论演进，探寻人类经济思想发展的璀璨星河。',
+    content: `
+      <h2>100位经济学领域关键学者</h2>
+      <p>"无论是对个人而言，还是对社会而言，在现代工业社会中，真正能促成生产的因素是一种概念，也有人更愿意称之为'全局眼光'。它是一种整体性观念，是一种对完整模式的全局把握。"——彼得·德鲁克</p>
+      
+      <p>拥有全局眼光，就像你在陌生空间拥有了万能地图。</p>
+      
+      <p>你能看见它的整体，也能看见它的道理、秩序和目的，让自己的内心不再混乱、无序和莫名其妙。</p>
+      
+      <p>下文，是经济学领域中的100位关键人物。</p>
+      
+      <p>温馨提示一下，本文与248本关键著作一起"服用"，更佳。</p>
+      
+      <p>因为，他们不是独立的个体，也不是无聊的文字拼接。</p>
+      
+      <p>他们，是灵动的，也是鲜活的。</p>
+      
+      <p>他们，有自己的人际网络。他们，在我们看不见的地方，相互影响着。</p>
+      
+      <p>比如，你会发现魁奈的《经济表》不仅影响着亚当·斯密的《国富论》，也影响着马克思的《资本论》。</p>
+      
+      <p>比如，你会发现亚当·斯密一生挚友——大卫·休谟跟丹尼尔·马尔萨斯是朋友，跟大穆勒也是朋友。小穆勒就在他们的交流和思想碰撞中，不断被塑造，最终成为一代经济学大师。</p>
+      
+      <p>比如，你还会发现，学派与学派之间的吸收、争吵、批判，会塑造出新学派。也正因为如此，经济学才得以推进与发展。</p>
+      
+      <p>这些人物与人物之间的关系，作品与作品之间的关联，学派与学派之间的重构，塑造了文字背后的灵动和鲜活，也让人看见了星火的代代相传。</p>
+      
+      <p>此文，只为致敬人类历史上的璀璨星河。</p>
+      
+      <h3>01 过去的关键人物</h3>
+      
+      <p>……（此处献给未知的前人）</p>
+      
+      <p><strong>1. 苏格拉底</strong>（Socrates，公元前469-公元前399），古希腊哲学家，色诺芬作为苏格拉底的学生，其经济理念来自于他的老师；</p>
+      
+      <p><strong>2. 色诺芬</strong>（Xenophon，公元前440-公元前355），古希腊哲学家、史学家，最早使用"经济"一词，在《居鲁士的教育》中提出了分工和专业化，在《雅典的收入》中研究了收入问题；</p>
+      
+      <p><strong>3. 柏拉图</strong>（Plato，公元前427-公元前347），古希腊唯心主义哲学家，师从苏格拉底，在《理想国》中提出了劳动分工、三阶级论等；</p>
+      
+      <p><strong>4. 亚里士多德</strong>（Aristotle，公元前384-公元前322），指出了商品的价值性和稀缺性、货币的价值储藏功能等；</p>
+      
+      <p>这是一份详尽的经济学思想史梳理，记录了从古希腊哲学家到现代经济学家的重要贡献。文章展现了经济学思想的历史传承和发展脉络，为读者提供了全面的经济学学者全景图。</p>
+      
+      <p><em>注：文章包含完整的100位经济学学者介绍，详细阐述了每位学者的理论贡献和历史地位。</em></p>
+    `,
+    category: 'economics',
+    tags: ['经济学', '经济学理论', '学者传记', '思想史', '经济学史'],
+    publishedAt: '2024-06-30',
+    readTime: 20,
     featured: true,
   }
 ];
@@ -145,38 +198,19 @@ export const tags = [
   '研究方法', '学术技能', '实践应用', '网站开发', '用户体验', '学术平台'
 ];
 
-// 智能获取所有文章（优先使用Markdown文件）
+// 客户端安全的文章获取函数（返回静态数据）
 export function getAllArticles(): Article[] {
-  try {
-    // 尝试从Markdown文件读取
-    const markdownArticles = getAllMarkdownArticles();
-    
-    // 如果Markdown文章存在，优先使用它们
-    if (markdownArticles.length > 0) {
-      // 合并Markdown文章和静态文章，Markdown文章优先
-      const allArticles = [...markdownArticles, ...articles];
-      
-      // 去重（基于标题或ID）
-      const uniqueArticles = allArticles.filter((article, index, self) => 
-        index === self.findIndex(a => a.title === article.title)
-      );
-      
-      return uniqueArticles.sort((a, b) => 
-        new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
-      );
-    }
-    
-    // 如果没有Markdown文章，返回静态文章
-    return articles.sort((a, b) => 
-      new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
-    );
-  } catch (error) {
-    console.error('获取文章时出错:', error);
-    // 发生错误时返回静态文章作为备份
-    return articles.sort((a, b) => 
-      new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
-    );
-  }
+  return articles.sort((a, b) => 
+    new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
+  );
+}
+
+// 服务器端文章获取函数（仅用于API路由）
+export function getAllArticlesServer(): Article[] {
+  // 这个函数只能在API路由中使用，不能在客户端组件中调用
+  return articles.sort((a, b) => 
+    new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
+  );
 }
 
 // 根据分类获取文章
