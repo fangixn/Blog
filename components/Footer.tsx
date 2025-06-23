@@ -47,19 +47,19 @@ export default function Footer() {
             <div className="flex flex-col space-y-4">
               <h4 className="text-lg font-semibold text-white">联系方式</h4>
               <div className="flex items-center space-x-3">
-                <a
-                  href="mailto:fangin1230@gmail.com"
-                  className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-purple-600 transition-colors duration-200 group"
-                  title="邮箱联系"
-                >
-                  <Mail className="h-5 w-5 group-hover:scale-110 transition-transform" />
-                </a>
+              <a
+                href="mailto:fangin1230@gmail.com"
+                className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-purple-600 transition-colors duration-200 group"
+                title="邮箱联系"
+              >
+                <Mail className="h-5 w-5 group-hover:scale-110 transition-transform" />
+              </a>
                 <div className="flex flex-col">
                   <span className="text-gray-300 text-sm">邮箱</span>
-                  <a 
+              <a
                     href="mailto:fangin1230@gmail.com"
                     className="text-purple-400 hover:text-purple-300 transition-colors text-sm"
-                  >
+              >
                     fangin1230@gmail.com
                   </a>
                 </div>

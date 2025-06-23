@@ -178,7 +178,7 @@ export default function ArticleGrid({ selectedCategory, selectedTags, initialArt
                 >
                   <Card 
                     className="h-full glass-effect hover:shadow-xl transition-all duration-500 border-0 shadow-lg hover:shadow-purple-200/40 group-hover:transform group-hover:scale-[1.02] rounded-3xl overflow-hidden cursor-pointer"
-                    onClick={() => router.push(`/articles/${article.id}`)}
+                    onClick={() => router.push(`/articles/${encodeURIComponent(article.id)}`)}
                   >
                     <CardHeader className="pb-4">
                       {/* Category & Featured Badge */}

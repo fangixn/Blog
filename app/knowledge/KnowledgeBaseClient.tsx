@@ -21,15 +21,20 @@ interface KnowledgeBaseClientProps {
 export default function KnowledgeBaseClient({ articles }: KnowledgeBaseClientProps) {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
+  const [activeTab, setActiveTab] = useState('overview');
 
-  // 知识模块定义 - 新增方法论模块作为起点
+  // 知识模块定义 - 统一使用紫色系渐变
   const knowledgeModules = [
     {
       id: 'methodology',
       title: '学习方法论',
       icon: Map,
       description: '自学经济学的方法论指南与实践路径',
-      color: 'from-red-500 to-pink-600',
+      color: 'from-purple-600 to-purple-700',
+      bgColor: 'from-purple-50 to-purple-100',
+      hoverColor: 'hover:from-purple-100 hover:to-purple-200',
+      textColor: 'text-purple-700',
+      borderColor: 'border-purple-200',
       keywords: ['如何从零开始自学', '方法论', '学习方法', '自学'],
       priority: 1
     },
@@ -38,7 +43,11 @@ export default function KnowledgeBaseClient({ articles }: KnowledgeBaseClientPro
       title: '入门基础',
       icon: BookOpen,
       description: '经济学入门指南与核心概念',
-      color: 'from-blue-500 to-blue-600',
+      color: 'from-indigo-600 to-purple-600',
+      bgColor: 'from-indigo-50 to-purple-100',
+      hoverColor: 'hover:from-indigo-100 hover:to-purple-200',
+      textColor: 'text-indigo-700',
+      borderColor: 'border-indigo-200',
       keywords: ['四本书', '入门', '基础', '门槛'],
       priority: 2
     },
@@ -47,7 +56,11 @@ export default function KnowledgeBaseClient({ articles }: KnowledgeBaseClientPro
       title: '关键学者',
       icon: Users,
       description: '重要经济学家与理论建构者',
-      color: 'from-green-500 to-green-600',
+      color: 'from-violet-600 to-purple-600',
+      bgColor: 'from-violet-50 to-purple-100',
+      hoverColor: 'hover:from-violet-100 hover:to-purple-200',
+      textColor: 'text-violet-700',
+      borderColor: 'border-violet-200',
       keywords: ['学者', '经济学家', '人物'],
       priority: 3
     },
@@ -56,7 +69,11 @@ export default function KnowledgeBaseClient({ articles }: KnowledgeBaseClientPro
       title: '理论学派',
       icon: School,
       description: '主要经济学流派与思想体系',
-      color: 'from-purple-500 to-purple-600',
+      color: 'from-purple-600 to-pink-600',
+      bgColor: 'from-purple-50 to-pink-100',
+      hoverColor: 'hover:from-purple-100 hover:to-pink-200',
+      textColor: 'text-purple-700',
+      borderColor: 'border-purple-200',
       keywords: ['学派', '流派', '理论', '思想'],
       priority: 4
     },
@@ -65,7 +82,11 @@ export default function KnowledgeBaseClient({ articles }: KnowledgeBaseClientPro
       title: '核心文献',
       icon: Lightbulb,
       description: '经典著作与重要文献资料',
-      color: 'from-orange-500 to-orange-600',
+      color: 'from-fuchsia-600 to-purple-600',
+      bgColor: 'from-fuchsia-50 to-purple-100',
+      hoverColor: 'hover:from-fuchsia-100 hover:to-purple-200',
+      textColor: 'text-fuchsia-700',
+      borderColor: 'border-fuchsia-200',
       keywords: ['著作', '文献', '书籍', '经典'],
       priority: 5
     }
@@ -163,7 +184,12 @@ export default function KnowledgeBaseClient({ articles }: KnowledgeBaseClientPro
                 variant="outline" 
                 size="lg"
                 className="apple-hover border-2 border-purple-300 hover:border-purple-400 text-purple-700 hover:text-purple-800 hover:bg-purple-50 font-medium px-8 py-4 rounded-2xl backdrop-blur-sm bg-white/60"
-                onClick={() => document.getElementById('learning-path')?.scrollIntoView({ behavior: 'smooth' })}
+                onClick={() => {
+                  setActiveTab('path');
+                  setTimeout(() => {
+                    document.getElementById('knowledge-content')?.scrollIntoView({ behavior: 'smooth' });
+                  }, 100);
+                }}
               >
                 <Compass className="mr-2 h-5 w-5" />
                 学习路径
@@ -216,7 +242,7 @@ export default function KnowledgeBaseClient({ articles }: KnowledgeBaseClientPro
           </div>
         </div>
 
-        <Tabs defaultValue="overview" className="space-y-8">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-8">
           <TabsList className="grid w-full grid-cols-5 rounded-3xl p-2 h-16 max-w-5xl mx-auto glass-effect border border-white/20 shadow-lg">
             <TabsTrigger value="overview" className="rounded-2xl font-medium">🗺️ 知识地图</TabsTrigger>
             <TabsTrigger value="ecosystem" className="rounded-2xl font-medium">🌐 生态协同</TabsTrigger>
@@ -260,18 +286,18 @@ export default function KnowledgeBaseClient({ articles }: KnowledgeBaseClientPro
                             <div
                               key={article.id}
                               onClick={() => handleArticleClick(article)}
-                              className="p-6 bg-gradient-to-br from-red-50 to-pink-50 rounded-2xl hover:from-red-100 hover:to-pink-100 cursor-pointer transition-all duration-300 border border-red-100 hover:border-red-200 group/item"
+                              className={`p-6 bg-gradient-to-br ${methodologyModule.bgColor} rounded-2xl ${methodologyModule.hoverColor} cursor-pointer transition-all duration-300 border ${methodologyModule.borderColor} hover:border-purple-300 group/item`}
                             >
                               <div className="flex items-start justify-between">
                                 <div className="flex-1">
-                                  <h4 className="font-bold text-gray-900 text-lg group-hover/item:text-red-600 transition-colors mb-2">
+                                  <h4 className={`font-bold text-gray-900 text-lg group-hover/item:${methodologyModule.textColor} transition-colors mb-2`}>
                                     {article.title}
                                   </h4>
                                   <p className="text-gray-600 text-sm line-clamp-3 mb-4">
                                     {article.excerpt}
                                   </p>
                                   <div className="flex items-center space-x-4">
-                                    <Badge className="bg-red-100 text-red-700 hover:bg-red-200 border-red-200">
+                                    <Badge className={`bg-purple-100 ${methodologyModule.textColor} hover:bg-purple-200 border-purple-200`}>
                                       ⏱️ {article.readTime} 分钟阅读
                                     </Badge>
                                     <span className="text-xs text-gray-500">
@@ -279,7 +305,7 @@ export default function KnowledgeBaseClient({ articles }: KnowledgeBaseClientPro
                                     </span>
                                   </div>
                                 </div>
-                                <ArrowRight className="h-6 w-6 text-red-400 group-hover/item:text-red-600 group-hover/item:translate-x-1 transition-all ml-4" />
+                                <ArrowRight className={`h-6 w-6 text-purple-400 group-hover/item:${methodologyModule.textColor} group-hover/item:translate-x-1 transition-all ml-4`} />
                               </div>
                             </div>
                           ))}
@@ -327,18 +353,18 @@ export default function KnowledgeBaseClient({ articles }: KnowledgeBaseClientPro
                             <div
                               key={article.id}
                               onClick={() => handleArticleClick(article)}
-                              className="p-4 bg-gray-50 rounded-2xl hover:bg-gray-100 cursor-pointer transition-colors group/item"
+                              className={`p-4 bg-gradient-to-br ${module.bgColor} rounded-2xl ${module.hoverColor} cursor-pointer transition-colors group/item border ${module.borderColor} hover:border-purple-300`}
                             >
                               <div className="flex items-center justify-between">
                                 <div className="flex-1">
-                                  <h4 className="font-semibold text-gray-900 group-hover/item:text-purple-600 transition-colors">
+                                  <h4 className={`font-semibold text-gray-900 group-hover/item:${module.textColor} transition-colors`}>
                                     {article.title}
                                   </h4>
                                   <p className="text-sm text-gray-600 mt-1 line-clamp-2">
                                     {article.excerpt}
                                   </p>
                                   <div className="flex items-center space-x-4 mt-3">
-                                    <Badge variant="secondary" className="text-xs">
+                                    <Badge variant="secondary" className={`text-xs bg-white/80 ${module.textColor} border-white/50`}>
                                       ⏱️ {article.readTime} 分钟阅读
                                     </Badge>
                                     <span className="text-xs text-gray-500">
@@ -346,7 +372,7 @@ export default function KnowledgeBaseClient({ articles }: KnowledgeBaseClientPro
                                     </span>
                                   </div>
                                 </div>
-                                <ArrowRight className="h-5 w-5 text-gray-400 group-hover/item:text-purple-600 group-hover/item:translate-x-1 transition-all" />
+                                <ArrowRight className={`h-5 w-5 text-gray-400 group-hover/item:${module.textColor} group-hover/item:translate-x-1 transition-all`} />
                               </div>
                             </div>
                           ))

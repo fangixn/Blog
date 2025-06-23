@@ -13,7 +13,7 @@ export default function EcosystemIntegration() {
       subtitle: '深度思考与学习路径',
       description: '系统化的经济学知识体系，从入门到精通的完整学习路径',
       icon: BookOpen,
-      color: 'from-purple-500 to-purple-600',
+      color: 'from-purple-600 to-purple-700',
       features: ['深度文章', '学习路径', '知识图谱', '思考总结'],
       current: true
     },
@@ -23,7 +23,7 @@ export default function EcosystemIntegration() {
       subtitle: '经济学资源导航平台',
       description: '最全面的经济学资源集合，涵盖数据分析、学术研究、政策解读',
       icon: Globe,
-      color: 'from-blue-500 to-blue-600',
+      color: 'from-indigo-600 to-purple-600',
       features: ['资源导航', '数据分析', '政策解读', '学术研究'],
       url: 'https://www.economicsweb.org/',
       current: false
@@ -34,7 +34,7 @@ export default function EcosystemIntegration() {
       subtitle: 'AI驱动的经济学研究助手',
       description: 'AI驱动的经济学知识库，整合多个AI模型与学术资源',
       icon: Bot,
-      color: 'from-green-500 to-green-600',
+      color: 'from-violet-600 to-purple-600',
       features: ['AI助手', 'GPT集成', 'Claude支持', '智能分析'],
       url: 'https://www.economicsai.org/',
       current: false
@@ -66,7 +66,7 @@ export default function EcosystemIntegration() {
     <div className="space-y-8">
       {/* 生态系统概览 */}
       <Card className="glass-effect border-0 rounded-3xl overflow-hidden">
-        <CardHeader className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white p-8">
+        <CardHeader className="bg-gradient-to-r from-purple-600 to-purple-700 text-white p-8">
           <CardTitle className="text-2xl font-bold flex items-center">
             🌐 经济学知识生态系统
           </CardTitle>
@@ -149,12 +149,12 @@ export default function EcosystemIntegration() {
         <CardContent className="p-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {integrationPoints.map((point, index) => (
-              <div key={index} className="text-center p-6 bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl">
+              <div key={index} className="text-center p-6 bg-gradient-to-br from-purple-50 to-purple-100 rounded-2xl border border-purple-200">
                 <div className="flex items-center justify-center space-x-2 mb-4">
                   <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center text-purple-600 font-bold text-sm">
                     {index + 1}
                   </div>
-                  <ArrowRight className="h-4 w-4 text-gray-400" />
+                  <ArrowRight className="h-4 w-4 text-purple-400" />
                 </div>
                 <h4 className="font-semibold text-gray-900 mb-2">{point.label}</h4>
                 <p className="text-sm text-gray-600">{point.description}</p>
@@ -171,7 +171,7 @@ export default function EcosystemIntegration() {
         </CardHeader>
         <CardContent className="p-8">
           <div className="space-y-6">
-            <div className="p-6 bg-gradient-to-r from-blue-50 to-purple-50 rounded-2xl border border-blue-100">
+            <div className="p-6 bg-gradient-to-r from-purple-50 to-indigo-50 rounded-2xl border border-purple-100">
               <h4 className="font-semibold text-gray-900 mb-3">🎓 学习者路径</h4>
               <div className="text-sm text-gray-700 space-y-2">
                 <p><strong>Step 1:</strong> 在个人知识库学习基础理论和学派思想</p>
@@ -180,7 +180,7 @@ export default function EcosystemIntegration() {
               </div>
             </div>
             
-            <div className="p-6 bg-gradient-to-r from-green-50 to-blue-50 rounded-2xl border border-green-100">
+            <div className="p-6 bg-gradient-to-r from-violet-50 to-purple-50 rounded-2xl border border-violet-100">
               <h4 className="font-semibold text-gray-900 mb-3">🔬 研究者路径</h4>
               <div className="text-sm text-gray-700 space-y-2">
                 <p><strong>Step 1:</strong> 从EconWeb收集最新数据和政策资料</p>
