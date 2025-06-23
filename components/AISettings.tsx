@@ -102,21 +102,36 @@ export default function AISettings({ onConfigChange, onClose }: AISettingsProps)
         }),
       });
 
-      if (response.ok) {
-        const result = await response.json();
-        console.log(`${provider} 测试成功:`, result);
+      let responseData;
+      try {
+        const responseText = await response.text();
+        if (responseText.trim()) {
+          responseData = JSON.parse(responseText);
+        } else {
+          throw new Error('服务器返回空响应');
+        }
+      } catch (parseError) {
+        console.error(`${provider} 响应解析失败:`, parseError);
+        setTestResults(prev => ({ ...prev, [provider]: 'error' }));
+        alert(`测试失败: 服务器响应格式错误\n请检查网络连接或稍后重试`);
+        return;
+      }
+
+      if (response.ok && responseData) {
+        console.log(`${provider} 测试成功:`, responseData);
         setTestResults(prev => ({ ...prev, [provider]: 'success' }));
+        
+        // 显示成功信息
+        if (responseData.response && responseData.response !== '连接成功') {
+          alert(`连接成功！\n回应: ${responseData.response.slice(0, 100)}...`);
+        }
       } else {
-        const errorData = await response.json();
-        console.error(`${provider} 测试失败:`, errorData);
+        console.error(`${provider} 测试失败:`, responseData);
         setTestResults(prev => ({ ...prev, [provider]: 'error' }));
         
         // 显示详细错误信息
-        if (errorData.details) {
-          alert(`测试失败: ${errorData.error}\n详细信息: ${errorData.details}`);
-        } else {
-          alert(`测试失败: ${errorData.error || '未知错误'}`);
-        }
+        const errorMsg = responseData?.error || `HTTP ${response.status} 错误`;
+        alert(`测试失败: ${errorMsg}\n\n💡 常见解决方案:\n• 检查API密钥是否正确\n• 确认账户有足够余额\n• 检查网络连接`);
       }
     } catch (error) {
       console.error(`${provider} 测试异常:`, error);

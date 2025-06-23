@@ -122,16 +122,53 @@ async function testProvider(provider: string, apiKey: string) {
     clearTimeout(timeoutId);
 
     if (!response.ok) {
-      const errorText = await response.text();
+      let errorMessage = `HTTP ${response.status}`;
+      try {
+        // 尝试解析JSON错误信息
+        const errorData = await response.json();
+        if (errorData.error) {
+          if (typeof errorData.error === 'string') {
+            errorMessage += `: ${errorData.error}`;
+          } else if (errorData.error.message) {
+            errorMessage += `: ${errorData.error.message}`;
+          }
+        }
+      } catch (parseError) {
+        // 如果不是JSON，获取文本内容
+        try {
+          const errorText = await response.text();
+          if (errorText) {
+            errorMessage += `: ${errorText.slice(0, 200)}`;
+          }
+        } catch (textError) {
+          errorMessage += `: 无法获取错误详情`;
+        }
+      }
+      
       return {
         provider: config.name,
         success: false,
-        error: `HTTP ${response.status}: ${errorText}`,
+        error: errorMessage,
         status: response.status
       };
     }
 
-    const data = await response.json();
+    // 处理成功响应
+    let data;
+    try {
+      const responseText = await response.text();
+      if (!responseText.trim()) {
+        throw new Error('API返回空响应');
+      }
+      data = JSON.parse(responseText);
+    } catch (parseError: any) {
+      return {
+        provider: config.name,
+        success: false,
+        error: `响应解析失败: ${parseError.message}`
+      };
+    }
+
     const result = config.parseResponse(data);
 
     return {
