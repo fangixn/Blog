@@ -256,7 +256,7 @@ export default function TranslationManager({
             <h3 className="text-lg font-semibold flex items-center space-x-2">
               <CheckCircle className="h-5 w-5 text-green-600" />
               <span>翻译完成</span>
-              <Badge className="bg-blue-100 text-blue-800">
+              <Badge className="bg-purple-100 text-purple-800">
                 {translationResults.length} 篇文章
               </Badge>
             </h3>
@@ -343,10 +343,10 @@ export default function TranslationManager({
         )}
 
         {/* 使用说明 */}
-        <Card className="bg-blue-50 border-blue-200">
+        <Card className="bg-purple-50 border-purple-200">
           <CardContent className="p-4">
-            <h4 className="font-medium mb-2 text-blue-800">智能翻译特性</h4>
-            <ul className="text-sm text-blue-700 space-y-1">
+                          <h4 className="font-medium mb-2 text-purple-800">智能翻译特性</h4>
+                          <ul className="text-sm text-purple-700 space-y-1">
               <li>• <strong>专业术语保护</strong>：自动识别并准确翻译经济学专业术语</li>
               <li>• <strong>本地化适配</strong>：自动调整数字、货币、日期格式</li>
               <li>• <strong>语体适配</strong>：根据目标语言文化调整正式程度</li>

@@ -13,14 +13,14 @@ export default function ProjectShowcase() {
   const otherProjects = projects.filter(project => !project.featured);
 
   return (
-    <section id="projects" className="py-20 bg-gradient-to-br from-gray-50 to-purple-50">
+    <section id="projects" className="py-20 apple-gradient">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center mb-16">
-          <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
+          <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-6 animate-fade-in">
             项目展示
           </h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto animate-slide-up" style={{ animationDelay: '0.2s' }}>
             探索技术与创意的结合，这里是我的数字作品集，每个项目都承载着对技术的热爱和对问题的独特解决方案
           </p>
         </div>
@@ -36,19 +36,19 @@ export default function ProjectShowcase() {
               {featuredProjects.map((project, index) => (
                 <Card
                   key={project.id}
-                  className="group bg-white hover:shadow-xl transition-all duration-500 border-0 shadow-lg overflow-hidden animate-slide-up"
-                  style={{ animationDelay: `${index * 0.2}s` }}
+                  className="group glass-effect hover:shadow-xl transition-all duration-500 border-0 shadow-lg overflow-hidden animate-slide-up apple-hover rounded-3xl"
+                  style={{ animationDelay: `${0.4 + index * 0.2}s` }}
                   onMouseEnter={() => setHoveredProject(project.id)}
                   onMouseLeave={() => setHoveredProject(null)}
                 >
                   {/* Project Image */}
-                  <div className="relative h-48 overflow-hidden">
+                  <div className="relative h-48 overflow-hidden rounded-t-3xl">
                     <img
                       src={project.image}
                       alt={project.title}
                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                     />
-                    <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-all duration-300"></div>
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent group-hover:from-black/60 transition-all duration-300"></div>
                     
                     {/* Overlay Links */}
                     <div className={`absolute inset-0 flex items-center justify-center space-x-4 transition-all duration-300 ${
@@ -56,7 +56,7 @@ export default function ProjectShowcase() {
                     }`}>
                       <Button
                         size="sm"
-                        className="bg-white/90 text-gray-900 hover:bg-white shadow-lg"
+                        className="bg-purple-600 hover:bg-purple-700 text-white shadow-lg border-0 rounded-2xl"
                         onClick={() => window.open(project.link, '_blank')}
                       >
                         <ExternalLink className="h-4 w-4 mr-2" />
@@ -66,7 +66,7 @@ export default function ProjectShowcase() {
                         <Button
                           size="sm"
                           variant="outline"
-                          className="bg-white/90 border-white text-gray-900 hover:bg-white shadow-lg"
+                          className="bg-white/90 border-2 border-white text-gray-900 hover:bg-white shadow-lg rounded-2xl"
                           onClick={() => window.open(project.github, '_blank')}
                         >
                           <Github className="h-4 w-4 mr-2" />
@@ -98,7 +98,7 @@ export default function ProjectShowcase() {
                         <Badge
                           key={tag}
                           variant="secondary"
-                          className="bg-purple-50 text-purple-700 hover:bg-purple-100 transition-colors"
+                          className="bg-purple-100 text-purple-700 hover:bg-purple-200 transition-colors rounded-2xl px-3 py-1 font-medium"
                         >
                           {tag}
                         </Badge>
@@ -112,7 +112,7 @@ export default function ProjectShowcase() {
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="text-purple-600 hover:text-purple-700 hover:bg-purple-50"
+                          className="text-purple-600 hover:text-purple-700 hover:bg-purple-50 rounded-xl transition-all duration-300"
                           onClick={() => window.open(project.link, '_blank')}
                         >
                           <ExternalLink className="h-4 w-4 mr-2" />
@@ -122,7 +122,7 @@ export default function ProjectShowcase() {
                           <Button
                             variant="ghost"
                             size="sm"
-                            className="text-gray-600 hover:text-gray-700 hover:bg-gray-50"
+                            className="text-purple-600 hover:text-purple-700 hover:bg-purple-50 rounded-xl transition-all duration-300"
                             onClick={() => window.open(project.github, '_blank')}
                           >
                             <Github className="h-4 w-4 mr-2" />

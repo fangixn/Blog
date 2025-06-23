@@ -7,7 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "new-article": "node scripts/new-article.js"
+    "new-article": "node scripts/new-article.js",
+    "article": "node scripts/new-article.js",
+    "list-articles": "node scripts/new-article.js"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",

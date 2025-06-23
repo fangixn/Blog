@@ -83,11 +83,11 @@ export default function About() {
           <h3 className="text-2xl font-bold text-gray-900 mb-8 text-center">主要经历</h3>
           <div className="grid md:grid-cols-3 gap-8">
             {experiences.map((exp, index) => (
-              <Card key={index} className="border-2 border-gray-100 hover:border-blue-200 transition-colors duration-200">
+                              <Card key={index} className="border-2 border-gray-100 hover:border-purple-200 transition-colors duration-200">
                 <CardContent className="p-6">
                   <div className="mb-4">
                     <h4 className="text-xl font-bold text-gray-900 mb-2">{exp.title}</h4>
-                    <p className="text-sm text-blue-600 font-medium">{exp.period}</p>
+                    <p className="text-sm text-purple-600 font-medium">{exp.period}</p>
                   </div>
                   <p className="text-gray-600 mb-4 leading-relaxed">
                     {exp.description}
@@ -95,7 +95,7 @@ export default function About() {
                   <div className="space-y-2">
                     {exp.highlights.map((highlight, idx) => (
                       <div key={idx} className="flex items-start">
-                        <span className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                        <span className="w-2 h-2 bg-purple-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
                         <span className="text-sm text-gray-700">{highlight}</span>
                       </div>
                     ))}

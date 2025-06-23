@@ -20,14 +20,13 @@ export default function Header() {
     { name: '文章', href: '#articles' },
     { name: '项目', href: '#projects' },
     { name: '关于', href: '#about' },
-
   ];
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 cubic-bezier(0.25, 0.46, 0.45, 0.94) ${
         isScrolled
-          ? 'bg-white/80 backdrop-blur-md border-b border-gray-200/50 shadow-sm'
+          ? 'glass-effect shadow-lg border-b border-purple-200/30'
           : 'bg-transparent'
       }`}
     >
@@ -35,7 +34,10 @@ export default function Header() {
         <div className="flex items-center justify-between h-16 lg:h-20">
           {/* Logo */}
           <div className="flex items-center">
-            <a href="#home" className="text-xl lg:text-2xl font-bold text-gray-900 hover:text-purple-600 transition-colors">
+            <a 
+              href="#home" 
+              className="text-xl lg:text-2xl font-bold text-gray-900 hover:text-purple-600 transition-all duration-300 apple-hover"
+            >
               方馨的博客
             </a>
           </div>
@@ -46,10 +48,10 @@ export default function Header() {
               <a
                 key={item.name}
                 href={item.href}
-                className="text-gray-600 hover:text-purple-600 font-medium transition-colors duration-200 relative group"
+                className="text-gray-600 hover:text-purple-600 font-medium transition-all duration-300 relative group py-2"
               >
                 {item.name}
-                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-purple-600 transition-all duration-200 group-hover:w-full"></span>
+                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-purple-600 to-pink-600 transition-all duration-300 group-hover:w-full rounded-full"></span>
               </a>
             ))}
           </nav>
@@ -59,7 +61,7 @@ export default function Header() {
             <Button
               variant="ghost"
               size="sm"
-              className="hidden sm:flex items-center space-x-2 text-gray-600 hover:text-purple-600"
+              className="hidden sm:flex items-center space-x-2 text-gray-600 hover:text-purple-600 hover:bg-purple-50 rounded-xl transition-all duration-300"
             >
               <Search className="h-4 w-4" />
               <span className="text-sm">搜索</span>
@@ -69,33 +71,37 @@ export default function Header() {
             <Button
               variant="ghost"
               size="sm"
-              className="lg:hidden"
+              className="lg:hidden hover:bg-purple-50 rounded-xl transition-all duration-300"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
             >
-              {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+              {isMenuOpen ? (
+                <X className="h-5 w-5 text-purple-600" />
+              ) : (
+                <Menu className="h-5 w-5 text-gray-600 hover:text-purple-600" />
+              )}
             </Button>
           </div>
         </div>
 
         {/* Mobile Navigation */}
         {isMenuOpen && (
-          <div className="lg:hidden bg-white/95 backdrop-blur-md border-t border-gray-200/50 animate-fade-in">
-            <div className="px-2 pt-2 pb-3 space-y-1">
+          <div className="lg:hidden glass-effect border-t border-purple-200/30 animate-fade-in rounded-b-2xl mt-2 overflow-hidden">
+            <div className="px-2 pt-4 pb-6 space-y-2">
               {menuItems.map((item) => (
                 <a
                   key={item.name}
                   href={item.href}
-                  className="block px-3 py-2 text-gray-600 hover:text-purple-600 font-medium transition-colors"
+                  className="block px-4 py-3 text-gray-600 hover:text-purple-600 hover:bg-purple-50 font-medium transition-all duration-300 rounded-xl"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   {item.name}
                 </a>
               ))}
-              <div className="px-3 py-2">
+              <div className="px-2 pt-2">
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="w-full justify-start text-gray-600 hover:text-purple-600"
+                  className="w-full justify-start text-gray-600 hover:text-purple-600 hover:bg-purple-50 rounded-xl transition-all duration-300"
                 >
                   <Search className="h-4 w-4 mr-2" />
                   搜索文章
