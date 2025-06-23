@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>方馨的博客</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-white text-gray-900 font-sans">
+  <!-- Header -->
+  <header class="flex justify-between items-center p-6 border-b">
+    <h1 class="text-2xl font-bold">方馨的博客</h1>
+    <nav class="space-x-4 text-sm">
+      <a href="#articles" class="hover:text-blue-600">文章</a>
+      <a href="#projects" class="hover:text-blue-600">项目</a>
+      <a href="#about" class="hover:text-blue-600">关于我</a>
+    </nav>
+  </header>
+
+  <!-- Hero -->
+  <section class="text-center py-20 bg-gray-100">
+    <h2 class="text-4xl font-bold mb-4">思想的记录器，代码的操作者</h2>
+    <p class="text-gray-600">欢迎来到我的博客，这里有我的思考、学习与创造。</p>
+  </section>
+
+  <!-- Article Categories -->
+  <section id="articles" class="px-6 py-12">
+    <h3 class="text-2xl font-semibold mb-6">📚 文章分类</h3>
+    <div class="grid grid-cols-2 md:grid-cols-3 gap-4 text-center">
+      <span class="bg-gray-100 py-2 rounded hover:bg-blue-100">经济学思考</span>
+      <span class="bg-gray-100 py-2 rounded hover:bg-blue-100">学习笔记</span>
+      <span class="bg-gray-100 py-2 rounded hover:bg-blue-100">项目展示</span>
+      <span class="bg-gray-100 py-2 rounded hover:bg-blue-100">AI观察</span>
+      <span class="bg-gray-100 py-2 rounded hover:bg-blue-100">随笔杂谈</span>
+    </div>
+
+    <div class="mt-10 space-y-6">
+      <!-- Article Preview -->
+      <article class="border rounded p-4 hover:shadow">
+        <h4 class="text-lg font-semibold">通胀与利率：宏观调控的边界</h4>
+        <p class="text-sm text-gray-500">分类：经济学思考｜2025-06-20</p>
+        <p class="mt-2 text-gray-700">探讨当前通胀形势与央行政策之间的张力，以及货币政策的时滞效应...</p>
+        <p class="text-xs text-gray-500 mt-2">如果你喜欢这篇文章，欢迎与我联系。</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- Projects -->
+  <section id="projects" class="px-6 py-12 bg-gray-50">
+    <h3 class="text-2xl font-semibold mb-6">🛠️ 我的项目</h3>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="border rounded p-4 hover:shadow">
+        <h4 class="font-semibold text-lg">文档智能问答系统</h4>
+        <p class="text-gray-700">支持多种格式上传，基于RAG实现智能问答。</p>
+        <a href="#" class="text-blue-600 text-sm mt-2 inline-block">查看项目 →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- About -->
+  <section id="about" class="px-6 py-12">
+    <h3 class="text-2xl font-semibold mb-6">🧑‍💼 关于我</h3>
+    <div class="bg-gray-100 p-6 rounded">
+      <p>你好，我是方馨，一名热爱经济学、技术与写作的学习者。我喜欢思考社会运行机制，也热衷于用代码实现创意。这个网站是我思维的记录，也是对未来的探索。</p>
+      <p class="mt-4">📮 联系我：<a href="mailto:fangin1230@gmail.com" class="text-blue-600">fangxin1230@gmail.com</a></p>
+    </div>
+  </section>
+
+  <!-- Subscribe -->
+  <section class="px-6 py-12 text-center">
+    <h4 class="text-xl font-semibold mb-2">📬 订阅我的博客</h4>
+    <p class="text-gray-600 mb-4">获取最新文章更新</p>
+    <input type="email" placeholder="输入你的邮箱" class="px-4 py-2 border rounded w-64 max-w-full" />
+    <button class="ml-2 px-4 py-2 bg-blue-600 text-white rounded">订阅</button>
+  </section>
+
+  <!-- Footer -->
+  <footer class="text-center text-sm text-gray-500 py-6 border-t">
+    版权所有 © 方馨 fangxin1230.com · 联系邮箱 fangin1230@gmail.com
+  </footer>
+</body>
+</html>
