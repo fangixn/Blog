@@ -1,7 +1,7 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Clock, Calendar, Tag, ArrowLeft, Share2 } from 'lucide-react';
+import { Clock, Calendar, Tag, ArrowLeft, Share2, ChevronUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
@@ -16,6 +16,7 @@ interface ArticlePageClientProps {
 
 export default function ArticlePageClient({ article, relatedArticles }: ArticlePageClientProps) {
   const router = useRouter();
+  const [showFloatingButton, setShowFloatingButton] = useState(false);
 
   const handleBack = () => {
     // 尝试返回上一页，如果没有历史记录则返回首页
@@ -25,6 +26,19 @@ export default function ArticlePageClient({ article, relatedArticles }: ArticleP
       router.push('/');
     }
   };
+
+  // 监听滚动以显示/隐藏悬浮返回按钮
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      setShowFloatingButton(scrollTop > 300); // 滚动超过300px时显示悬浮按钮
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('zh-CN', {
@@ -68,15 +82,15 @@ export default function ArticlePageClient({ article, relatedArticles }: ArticleP
       <Header />
       
       <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Back Button */}
+        {/* Back Button - 优化版本 */}
         <div className="mb-8">
           <Button
-            variant="ghost"
+            variant="outline"
             onClick={handleBack}
-            className="text-purple-600 hover:text-purple-700 hover:bg-purple-50 rounded-2xl"
+            className="group bg-white/90 backdrop-blur-sm border-2 border-purple-200 text-purple-700 hover:text-white hover:bg-purple-600 hover:border-purple-600 rounded-2xl px-8 py-4 text-lg font-medium shadow-lg hover:shadow-xl transition-all duration-300 ease-in-out transform hover:scale-105 active:scale-95 min-w-[140px] sm:min-w-[160px] touch-manipulation select-none"
           >
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            返回
+            <ArrowLeft className="h-6 w-6 mr-3 transition-transform duration-300 group-hover:-translate-x-1" />
+            <span className="font-semibold">返回上页</span>
           </Button>
         </div>
 
@@ -192,6 +206,19 @@ export default function ArticlePageClient({ article, relatedArticles }: ArticleP
           </section>
         )}
       </article>
+
+      {/* 悬浮返回按钮 */}
+      {showFloatingButton && (
+        <div className="fixed bottom-6 right-6 z-50 sm:bottom-8 sm:right-8">
+                      <Button
+              onClick={handleBack}
+              className="group bg-purple-600 hover:bg-purple-700 text-white rounded-full p-4 sm:p-5 shadow-2xl hover:shadow-purple-500/25 transition-all duration-300 ease-in-out transform hover:scale-110 active:scale-95 border-4 border-white/20 min-w-[56px] min-h-[56px] sm:min-w-[64px] sm:min-h-[64px] touch-manipulation select-none"
+              size="lg"
+            >
+            <ArrowLeft className="h-6 w-6 sm:h-7 sm:w-7 transition-transform duration-300 group-hover:-translate-x-1" />
+          </Button>
+        </div>
+      )}
 
       <Footer />
     </div>
