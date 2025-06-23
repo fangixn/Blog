@@ -20,7 +20,7 @@ export default function About() {
       title: '技术开发',
       description: '开发多个专业工具和平台，服务学术研究和实际应用',
       period: '2025年至今',
-      highlights: ['EconomicsWeb 经济学导航平台', 'EconAI 经济学AI助手', 'TranslationCompare 翻译对比工具']
+      highlights: ['EconWeb 经济学导航平台', 'EconAI 经济学AI助手', 'TranslationCompare 翻译对比工具']
     },
     {
       title: '知识分享',

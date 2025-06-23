@@ -38,7 +38,7 @@ export const articles: Article[] = [];
 export const projects: Project[] = [
   {
     id: '1',
-    title: 'EconomicsWeb - 经济学资源导航',
+    title: 'EconWeb - 经济学资源导航',
     description: '最全面的经济学资源集合，涵盖数据分析、学术研究、政策解读等，支持智能搜索、分类浏览，是经济学专业人士的必备工具平台。',
     image: 'auto', // 设置为 'auto' 将自动获取网站截图或 OG 图片
     tags: ['经济学', '资源导航', 'Next.js', 'SEO', '学术资源', '数据源'],

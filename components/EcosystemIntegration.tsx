@@ -19,7 +19,7 @@ export default function EcosystemIntegration() {
     },
     {
       id: 'econweb',
-      title: 'EconomicsWeb',
+      title: 'EconWeb',
       subtitle: '经济学资源导航平台',
       description: '最全面的经济学资源集合，涵盖数据分析、学术研究、政策解读',
       icon: Globe,

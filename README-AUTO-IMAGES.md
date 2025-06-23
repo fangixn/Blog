@@ -25,7 +25,7 @@
 ```typescript
 {
   id: '1',
-  title: 'EconomicsWeb - 经济学资源导航',
+      title: 'EconWeb - 经济学资源导航',
   description: '...',
   image: 'auto', // 自动获取网站图片
   link: 'https://www.economicsweb.org/',
@@ -57,7 +57,7 @@ curl -X POST https://your-domain.com/api/update-images
 
 | 项目 | 网站 | 状态 |
 |------|------|------|
-| EconomicsWeb | https://www.economicsweb.org/ | ✅ 自动获取 |
+| EconWeb | https://www.economicsweb.org/ | ✅ 自动获取 |
 | EconAI | https://www.economicsai.org/ | ✅ 自动获取 |
 | TranslationCompare | https://www.translationcompare.com/ | ✅ 自动获取 |
 | AIMCP Web | https://www.aimcpweb.com/zh | ✅ 自动获取 |

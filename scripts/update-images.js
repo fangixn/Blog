@@ -99,7 +99,7 @@ async function updateProjectsData() {
   
   // 简单的项目URL提取（这里可以根据实际情况调整）
   const projectUrls = [
-    { id: '1', url: 'https://www.economicsweb.org/', title: 'EconomicsWeb' },
+    { id: '1', url: 'https://www.economicsweb.org/', title: 'EconWeb' },
     { id: '2', url: 'https://www.economicsai.org/', title: 'EconAI' },
     { id: '3', url: 'https://www.translationcompare.com/', title: 'TranslationCompare' },
     { id: '4', url: 'https://www.aimcpweb.com/zh', title: 'AIMCP Web' }

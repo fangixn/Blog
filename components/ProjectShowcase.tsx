@@ -1,46 +1,13 @@
 'use client';
-import { useState, useEffect } from 'react';
-import { ExternalLink, Github, ArrowRight } from 'lucide-react';
+import { useState } from 'react';
+import { ExternalLink, Github, ArrowRight, Globe, Code } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { projects } from '@/lib/data';
-import { getBestWebsiteImage } from '@/lib/screenshot';
 
 export default function ProjectShowcase() {
   const [hoveredProject, setHoveredProject] = useState<string | null>(null);
-  const [projectImages, setProjectImages] = useState<{ [key: string]: string }>({});
-  const [loadingImages, setLoadingImages] = useState<{ [key: string]: boolean }>({});
-
-  // 动态加载项目图片
-  useEffect(() => {
-    const loadProjectImages = async () => {
-      for (const project of projects) {
-        if (project.image === 'auto') {
-          setLoadingImages(prev => ({ ...prev, [project.id]: true }));
-          
-          try {
-            const imageUrl = await getBestWebsiteImage(project.link);
-            setProjectImages(prev => ({ ...prev, [project.id]: imageUrl }));
-          } catch (error) {
-            console.error(`加载项目图片失败 (${project.title}):`, error);
-            // 使用占位符图片
-            setProjectImages(prev => ({ 
-              ...prev, 
-              [project.id]: `https://via.placeholder.com/800x400/1e293b/ffffff?text=${encodeURIComponent(project.title.split(' - ')[0])}` 
-            }));
-          } finally {
-            setLoadingImages(prev => ({ ...prev, [project.id]: false }));
-          }
-        } else {
-          // 如果不是 'auto'，直接使用指定的图片URL
-          setProjectImages(prev => ({ ...prev, [project.id]: project.image }));
-        }
-      }
-    };
-
-    loadProjectImages();
-  }, []);
 
   return (
     <section id="projects" className="py-20 apple-gradient">
@@ -60,79 +27,47 @@ export default function ProjectShowcase() {
           {projects.map((project, index) => (
             <Card
               key={project.id}
-              className="group glass-effect hover:shadow-xl transition-all duration-500 border-0 shadow-lg overflow-hidden animate-slide-up apple-hover rounded-3xl"
+              className="group glass-effect hover:shadow-xl transition-all duration-500 border-0 shadow-lg hover:shadow-purple-200/40 group-hover:transform group-hover:scale-[1.02] rounded-3xl overflow-hidden cursor-pointer animate-slide-up apple-hover"
               style={{ animationDelay: `${0.4 + index * 0.2}s` }}
               onMouseEnter={() => setHoveredProject(project.id)}
               onMouseLeave={() => setHoveredProject(null)}
+              onClick={() => window.open(project.link, '_blank')}
             >
-              {/* Project Image */}
-              <div className="relative h-48 overflow-hidden rounded-t-3xl">
-                {loadingImages[project.id] ? (
-                  // 加载中的占位符
-                  <div className="w-full h-full bg-gradient-to-br from-purple-100 to-purple-200 flex items-center justify-center">
-                    <div className="flex flex-col items-center space-y-2">
-                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div>
-                      <span className="text-purple-600 text-sm font-medium">加载中...</span>
-                    </div>
-                  </div>
-                ) : (
-                  <img
-                    src={projectImages[project.id] || project.image}
-                    alt={project.title}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                    onError={(e) => {
-                      // 图片加载失败时的备用处理
-                      const target = e.target as HTMLImageElement;
-                      target.src = `https://via.placeholder.com/800x400/1e293b/ffffff?text=${encodeURIComponent(project.title.split(' - ')[0])}`;
-                    }}
-                  />
-                )}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent group-hover:from-black/60 transition-all duration-300"></div>
-                
-                {/* Overlay Links */}
-                <div className={`absolute inset-0 flex items-center justify-center space-x-4 transition-all duration-300 ${
-                  hoveredProject === project.id ? 'opacity-100' : 'opacity-0'
-                }`}>
-                  <Button
-                    size="sm"
-                    className="bg-purple-600 hover:bg-purple-700 text-white shadow-lg border-0 rounded-2xl"
-                    onClick={() => window.open(project.link, '_blank')}
-                  >
-                    <ExternalLink className="h-4 w-4 mr-2" />
-                    访问项目
-                  </Button>
-                  {project.github && (
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="bg-white/90 border-2 border-white text-gray-900 hover:bg-white shadow-lg rounded-2xl"
-                      onClick={() => window.open(project.github, '_blank')}
-                    >
-                      <Github className="h-4 w-4 mr-2" />
-                      代码
-                    </Button>
-                  )}
-                </div>
-              </div>
-
               <CardHeader className="pb-4">
-                <h3 className="text-xl font-semibold text-gray-900 group-hover:text-purple-600 transition-colors">
+                {/* Project Type Badge */}
+                <div className="flex items-center justify-between mb-4">
+                  <Badge 
+                    variant="secondary" 
+                    className="bg-purple-100 text-purple-700 hover:bg-purple-200 rounded-2xl px-4 py-2 font-medium"
+                  >
+                    数字项目
+                  </Badge>
+                  <div className="flex items-center space-x-2">
+                    <Globe className="h-5 w-5 text-purple-600" />
+                    {project.github && (
+                      <Code className="h-5 w-5 text-purple-600" />
+                    )}
+                  </div>
+                </div>
+                
+                {/* Title */}
+                <h3 className="text-xl font-semibold text-gray-900 group-hover:text-purple-600 transition-colors duration-300 leading-tight">
                   {project.title}
                 </h3>
               </CardHeader>
 
-              <CardContent className="pb-6">
-                <p className="text-gray-600 leading-relaxed mb-4">
+              <CardContent className="py-4">
+                <p className="text-gray-600 leading-relaxed mb-6">
                   {project.description}
                 </p>
                 
                 {/* Tech Stack */}
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-2 mb-4">
                   {project.tags.map((tag) => (
                     <Badge
                       key={tag}
-                      variant="secondary"
-                      className="bg-purple-100 text-purple-700 hover:bg-purple-200 transition-colors rounded-2xl px-3 py-1 font-medium"
+                      variant="outline"
+                      className="text-xs border-purple-200 text-purple-600 hover:bg-purple-50 rounded-xl"
                     >
                       {tag}
                     </Badge>
@@ -147,24 +82,33 @@ export default function ProjectShowcase() {
                       variant="ghost"
                       size="sm"
                       className="text-purple-600 hover:text-purple-700 hover:bg-purple-50 rounded-xl transition-all duration-300"
-                      onClick={() => window.open(project.link, '_blank')}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        window.open(project.link, '_blank');
+                      }}
                     >
                       <ExternalLink className="h-4 w-4 mr-2" />
-                      查看项目
+                      访问项目
                     </Button>
                     {project.github && (
                       <Button
                         variant="ghost"
                         size="sm"
                         className="text-purple-600 hover:text-purple-700 hover:bg-purple-50 rounded-xl transition-all duration-300"
-                        onClick={() => window.open(project.github, '_blank')}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          window.open(project.github, '_blank');
+                        }}
                       >
                         <Github className="h-4 w-4 mr-2" />
                         源码
                       </Button>
                     )}
                   </div>
-                  <ArrowRight className="h-5 w-5 text-gray-400 group-hover:text-purple-600 group-hover:translate-x-1 transition-all duration-200" />
+                  <div className="flex items-center text-purple-600 group-hover:text-purple-700 transition-colors">
+                    <span className="text-sm font-medium">访问项目</span>
+                    <ArrowRight className="h-4 w-4 ml-1 group-hover:transform group-hover:translate-x-1 transition-transform" />
+                  </div>
                 </div>
               </CardFooter>
             </Card>

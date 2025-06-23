@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { Search, BookOpen, Users, School, Lightbulb, ArrowRight, Grid, Map } from 'lucide-react';
+import { Search, BookOpen, Users, School, Lightbulb, ArrowRight, Grid, Map, ChevronDown, Brain, Target, Compass, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -100,60 +100,129 @@ export default function KnowledgeBaseClient({ articles }: KnowledgeBaseClientPro
   }, [articles]);
 
   const handleArticleClick = (article: Article) => {
-    router.push(`/articles/${article.id}`);
+    // 使用encodeURIComponent确保URL编码正确
+    router.push(`/articles/${encodeURIComponent(article.id)}`);
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+    <div className="min-h-screen bg-white">
       <Header />
       
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* 头部介绍 */}
-        <div className="text-center mb-16">
-          <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
-            📚 经济学知识库
-          </h1>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
-            从学习方法论到知识体系构建，系统性的经济学自学平台，探索人类经济思想的发展脉络
-          </p>
-          
-          {/* 统计信息 */}
-          <div className="flex justify-center space-x-8 mb-8">
-            <div className="text-center">
-              <div className="text-3xl font-bold text-purple-600">{articles.length}</div>
-              <div className="text-gray-600">知识文档</div>
+      {/* Hero Section - 与首页风格一致 */}
+      <section className="apple-gradient min-h-[70vh] flex items-center justify-center py-20 px-4 relative overflow-hidden">
+        {/* Background decorations */}
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute top-20 left-10 w-72 h-72 bg-purple-200/30 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute bottom-20 right-10 w-96 h-96 bg-indigo-200/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+        </div>
+        
+        <div className="max-w-5xl mx-auto text-center relative z-10">
+          <div className="animate-fade-in">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight">
+              📚 经济学<br />
+              <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                知识库
+              </span>
+            </h1>
+            
+            <p className="text-lg sm:text-xl text-gray-600 mb-10 max-w-3xl mx-auto leading-relaxed animate-slide-up" style={{ animationDelay: '0.2s' }}>
+              从学习方法论到知识体系构建，系统性的经济学自学平台
+            </p>
+            
+            {/* 统计信息卡片 */}
+            <div className="animate-scale-in mb-10" style={{ animationDelay: '0.4s' }}>
+              <div className="bg-white/60 backdrop-blur-md rounded-3xl p-8 shadow-lg border border-white/20 max-w-4xl mx-auto">
+                <div className="grid grid-cols-3 divide-x divide-purple-200/50">
+                  <div className="text-center px-4">
+                    <div className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-purple-700 bg-clip-text text-transparent">{articles.length}</div>
+                    <div className="text-gray-600 text-sm font-medium">知识文档</div>
+                  </div>
+                  <div className="text-center px-4">
+                    <div className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-blue-700 bg-clip-text text-transparent">{knowledgeModules.length}</div>
+                    <div className="text-gray-600 text-sm font-medium">知识模块</div>
+                  </div>
+                  <div className="text-center px-4">
+                    <div className="text-3xl font-bold bg-gradient-to-r from-green-600 to-green-700 bg-clip-text text-transparent">∞</div>
+                    <div className="text-gray-600 text-sm font-medium">探索可能</div>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div className="text-center">
-              <div className="text-3xl font-bold text-blue-600">{knowledgeModules.length}</div>
-              <div className="text-gray-600">知识模块</div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl font-bold text-green-600">∞</div>
-              <div className="text-gray-600">探索可能</div>
+            
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center animate-scale-in" style={{ animationDelay: '0.6s' }}>
+              <Button 
+                size="lg" 
+                className="apple-hover bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-medium px-8 py-4 rounded-2xl shadow-lg hover:shadow-purple-300/50 border-0"
+                onClick={() => document.getElementById('knowledge-content')?.scrollIntoView({ behavior: 'smooth' })}
+              >
+                <Brain className="mr-2 h-5 w-5" />
+                开始探索
+              </Button>
+              
+              <Button 
+                variant="outline" 
+                size="lg"
+                className="apple-hover border-2 border-purple-300 hover:border-purple-400 text-purple-700 hover:text-purple-800 hover:bg-purple-50 font-medium px-8 py-4 rounded-2xl backdrop-blur-sm bg-white/60"
+                onClick={() => document.getElementById('learning-path')?.scrollIntoView({ behavior: 'smooth' })}
+              >
+                <Compass className="mr-2 h-5 w-5" />
+                学习路径
+              </Button>
             </div>
           </div>
         </div>
 
-        {/* 搜索栏 */}
-        <div className="glass-effect rounded-2xl p-6 mb-12 shadow-lg">
-          <div className="relative max-w-2xl mx-auto">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-            <Input
-              placeholder="🔍 搜索知识库：理论、学者、著作、概念..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 pr-4 py-3 rounded-xl border-gray-200 focus:border-purple-400 text-center"
-            />
+        {/* Scroll indicator */}
+        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
+          <ChevronDown 
+            className="h-6 w-6 text-purple-600 cursor-pointer hover:text-purple-700 transition-colors"
+            onClick={() => document.getElementById('knowledge-content')?.scrollIntoView({ behavior: 'smooth' })}
+          />
+        </div>
+      </section>
+      
+      <main id="knowledge-content" className="py-20 bg-gradient-to-br from-white via-purple-50/30 to-pink-50/20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+        {/* Section Header */}
+        <div className="text-center mb-16">
+          <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-6 animate-fade-in">
+            知识探索
+          </h2>
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto animate-slide-up" style={{ animationDelay: '0.2s' }}>
+            选择你感兴趣的知识模块，或使用搜索功能快速定位内容
+          </p>
+        </div>
+
+        {/* 搜索栏 - 与首页风格一致 */}
+        <div className="mb-12 glass-effect rounded-3xl p-6 shadow-lg border border-white/20">
+          <div className="flex flex-col items-center">
+            <div className="relative w-full max-w-2xl">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-purple-400" />
+              <Input
+                type="text"
+                placeholder="🔍 搜索知识库：理论、学者、著作、概念..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10 pr-4 py-3 rounded-2xl border-purple-200 focus:border-purple-400 focus:ring-purple-300 w-full text-center"
+              />
+            </div>
+            
+            {!searchQuery && (
+              <p className="text-sm text-gray-500 mt-3 text-center">
+                💡 支持搜索：文章标题、内容、标签
+              </p>
+            )}
           </div>
         </div>
 
         <Tabs defaultValue="overview" className="space-y-8">
-          <TabsList className="grid w-full grid-cols-5 rounded-2xl p-1 h-14 max-w-4xl mx-auto">
-            <TabsTrigger value="overview" className="rounded-xl">🗺️ 知识地图</TabsTrigger>
-            <TabsTrigger value="ecosystem" className="rounded-xl">🌐 生态协同</TabsTrigger>
-            <TabsTrigger value="graph" className="rounded-xl">🕸️ 关联图谱</TabsTrigger>
-            <TabsTrigger value="search" className="rounded-xl">🔍 搜索浏览</TabsTrigger>
-            <TabsTrigger value="path" className="rounded-xl">📖 学习路径</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-5 rounded-3xl p-2 h-16 max-w-5xl mx-auto glass-effect border border-white/20 shadow-lg">
+            <TabsTrigger value="overview" className="rounded-2xl font-medium">🗺️ 知识地图</TabsTrigger>
+            <TabsTrigger value="ecosystem" className="rounded-2xl font-medium">🌐 生态协同</TabsTrigger>
+            <TabsTrigger value="graph" className="rounded-2xl font-medium">🕸️ 关联图谱</TabsTrigger>
+            <TabsTrigger value="search" className="rounded-2xl font-medium">🔍 搜索浏览</TabsTrigger>
+            <TabsTrigger value="path" className="rounded-2xl font-medium">📖 学习路径</TabsTrigger>
           </TabsList>
 
           {/* 知识地图视图 */}
@@ -313,66 +382,74 @@ export default function KnowledgeBaseClient({ articles }: KnowledgeBaseClientPro
           <TabsContent value="search" className="space-y-6">
             {searchQuery && (
               <div className="text-center mb-8">
-                <p className="text-gray-600">
+                <p className="text-lg text-gray-600">
                   找到 <span className="font-semibold text-purple-600">{filteredArticles.length}</span> 篇相关文章
                 </p>
               </div>
             )}
             
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredArticles.map((article) => (
-                <Card
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {filteredArticles.map((article, index) => (
+                <article
                   key={article.id}
-                  onClick={() => handleArticleClick(article)}
-                  className="group hover:shadow-lg transition-all duration-300 cursor-pointer glass-effect rounded-2xl border-0"
+                  className="group animate-slide-up apple-hover"
+                  style={{ animationDelay: `${0.1 + index * 0.05}s` }}
                 >
-                  <CardHeader className="pb-4">
-                    <CardTitle className="text-lg group-hover:text-purple-600 transition-colors line-clamp-2">
-                      {article.title}
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-gray-600 text-sm line-clamp-3 mb-4">
-                      {article.excerpt}
-                    </p>
-                    <div className="flex flex-wrap gap-2 mb-4">
-                      {article.tags.slice(0, 3).map((tag) => (
-                        <Badge key={tag} variant="secondary" className="text-xs rounded-full">
-                          {tag}
-                        </Badge>
-                      ))}
-                    </div>
-                    <div className="flex justify-between items-center text-xs text-gray-500">
-                      <span>⏱️ {article.readTime} 分钟阅读</span>
-                      <span>📅 {new Date(article.publishedAt).toLocaleDateString('zh-CN')}</span>
-                    </div>
-                  </CardContent>
-                </Card>
+                  <Card 
+                    className="h-full glass-effect hover:shadow-xl transition-all duration-500 border-0 shadow-lg hover:shadow-purple-200/40 group-hover:transform group-hover:scale-[1.02] rounded-3xl overflow-hidden cursor-pointer"
+                    onClick={() => handleArticleClick(article)}
+                  >
+                    <CardHeader className="pb-4">
+                      <CardTitle className="text-xl font-semibold text-gray-900 group-hover:text-purple-600 transition-colors duration-300 line-clamp-2 leading-tight">
+                        {article.title}
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-gray-600 text-sm line-clamp-3 mb-4 leading-relaxed">
+                        {article.excerpt}
+                      </p>
+                      <div className="flex flex-wrap gap-2 mb-4">
+                        {article.tags.slice(0, 3).map((tag) => (
+                          <Badge key={tag} className="bg-purple-100 text-purple-700 hover:bg-purple-200 rounded-2xl px-3 py-1 text-xs font-medium">
+                            {tag}
+                          </Badge>
+                        ))}
+                      </div>
+                      <div className="flex justify-between items-center text-xs text-gray-500 pt-4 border-t border-gray-100">
+                        <span className="flex items-center">
+                          <Clock className="h-3 w-3 mr-1" />
+                          {article.readTime} 分钟阅读
+                        </span>
+                        <span>📅 {new Date(article.publishedAt).toLocaleDateString('zh-CN')}</span>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </article>
               ))}
             </div>
           </TabsContent>
 
           {/* 学习路径视图 */}
-          <TabsContent value="path" className="space-y-8">
+          <TabsContent id="learning-path" value="path" className="space-y-8">
             <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold text-gray-900 mb-4">📖 推荐学习路径</h2>
-              <p className="text-gray-600 max-w-2xl mx-auto">
+              <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-6 animate-fade-in">📖 推荐学习路径</h2>
+              <p className="text-lg text-gray-600 max-w-2xl mx-auto animate-slide-up" style={{ animationDelay: '0.2s' }}>
                 基于方法论指导的科学学习路径：先掌握学习方法，再深入专业内容，逐步构建完整的经济学知识体系
               </p>
             </div>
             
             {/* 学习路径说明 */}
-            <div className="glass-effect rounded-2xl p-6 mb-8 border border-purple-100">
-              <div className="flex items-start space-x-4">
-                <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-r from-red-500 to-pink-600 rounded-full flex items-center justify-center">
-                  <Map className="h-6 w-6 text-white" />
+            <div className="glass-effect rounded-3xl p-8 mb-8 border border-white/20 shadow-lg">
+              <div className="flex items-start space-x-6">
+                <div className="flex-shrink-0 w-16 h-16 bg-gradient-to-r from-red-500 to-pink-600 rounded-full flex items-center justify-center shadow-lg">
+                  <Target className="h-8 w-8 text-white" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">🚀 为什么从方法论开始？</h3>
-                  <div className="text-gray-600 space-y-2">
+                  <h3 className="text-xl font-semibold text-gray-900 mb-4">🚀 为什么从方法论开始？</h3>
+                  <div className="text-gray-600 space-y-3 leading-relaxed">
                     <p>• <strong>1.0 → 2.0 的方法演进</strong>：从传统教科书学习转向前沿论文研究</p>
                     <p>• <strong>"目的-阶段性结果-行动"模型</strong>：建立高效的自学框架</p>
-                    <p>• <strong>主题阅读 + 抽样阅读 + 文本细读</strong>：构建系统性知识体系</p>
+                    <p>• <strong>主题阅读 + 抽样阅读 + 文本细读 + 结构阅读</strong>：构建系统性知识体系</p>
                     <p>• <strong>过去、现在、未来</strong>：从经典理论到学术前沿的完整视角</p>
                   </div>
                 </div>
@@ -437,6 +514,7 @@ export default function KnowledgeBaseClient({ articles }: KnowledgeBaseClientPro
             </div>
           </TabsContent>
         </Tabs>
+        </div>
       </main>
 
       <Footer />
