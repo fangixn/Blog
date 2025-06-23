@@ -1,13 +1,13 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Send, Bot, User, Loader2, Settings, GitCompare } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Switch } from '@/components/ui/switch';
+import { Textarea } from '@/components/ui/textarea';
 import { type Article } from '@/lib/data';
 import AISettings from './AISettings';
 
@@ -44,6 +44,47 @@ export default function AIAssistant({ articles }: AIAssistantProps) {
   const [showSettings, setShowSettings] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
   const [compareMode, setCompareMode] = useState(false);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // 自动调整输入框高度
+  const adjustTextareaHeight = () => {
+    const textarea = textareaRef.current;
+    if (textarea) {
+      textarea.style.height = 'auto';
+      const scrollHeight = textarea.scrollHeight;
+      const maxHeight = 120; // 最大高度约5行
+      textarea.style.height = Math.min(scrollHeight, maxHeight) + 'px';
+      textarea.style.overflowY = scrollHeight > maxHeight ? 'auto' : 'hidden';
+    }
+  };
+
+  // 处理输入内容变化
+  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setInputMessage(e.target.value);
+    adjustTextareaHeight();
+  };
+
+  // 处理键盘事件
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter') {
+      if (e.shiftKey) {
+        // Shift+Enter换行，不做处理，让默认行为发生
+        return;
+      } else {
+        // Enter发送消息
+        e.preventDefault();
+        handleSendMessage();
+      }
+    }
+  };
+
+  // 重置输入框高度
+  const resetTextareaHeight = () => {
+    const textarea = textareaRef.current;
+    if (textarea) {
+      textarea.style.height = 'auto';
+    }
+  };
 
   // 检查本地存储的API密钥
   useEffect(() => {
@@ -81,6 +122,11 @@ export default function AIAssistant({ articles }: AIAssistantProps) {
     };
   }, []);
 
+  // 输入框内容变化时调整高度
+  useEffect(() => {
+    adjustTextareaHeight();
+  }, [inputMessage]);
+
   // 预设问题
   const suggestedQuestions = [
     '马克思的主要经济学贡献是什么？',
@@ -102,6 +148,7 @@ export default function AIAssistant({ articles }: AIAssistantProps) {
 
     setMessages(prev => [...prev, userMessage]);
     setInputMessage('');
+    resetTextareaHeight(); // 重置输入框高度
     setIsLoading(true);
 
     try {
@@ -199,13 +246,6 @@ export default function AIAssistant({ articles }: AIAssistantProps) {
 
   const handleQuestionClick = (question: string) => {
     setInputMessage(question);
-  };
-
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      handleSendMessage();
-    }
   };
 
   // 处理配置变化
@@ -440,19 +480,21 @@ export default function AIAssistant({ articles }: AIAssistantProps) {
           </div>
         )}
 
-        <div className="flex space-x-3">
-          <Input
+        <div className="flex items-start space-x-3">
+          <Textarea
+            ref={textareaRef}
             value={inputMessage}
-            onChange={(e) => setInputMessage(e.target.value)}
-            onKeyPress={handleKeyPress}
+            onChange={handleInputChange}
+            onKeyDown={handleKeyDown}
             placeholder={hasApiKeys ? "问我任何经济学问题..." : "请先配置AI服务密钥..."}
-            className="flex-1 rounded-2xl border-purple-200 focus:border-purple-400 focus:ring-purple-300"
+            className="flex-1 min-h-[2.5rem] max-h-[7.5rem] resize-none rounded-2xl border-purple-200 focus:border-purple-400 focus:ring-purple-300 py-3 px-4"
             disabled={isLoading || !hasApiKeys}
+            rows={1}
           />
           <Button
             onClick={handleSendMessage}
             disabled={!inputMessage.trim() || isLoading || !hasApiKeys}
-            className="bg-purple-600 hover:bg-purple-700 text-white rounded-2xl px-6"
+            className="bg-purple-600 hover:bg-purple-700 text-white rounded-2xl px-6 py-3 self-end"
           >
             {isLoading ? (
               <Loader2 className="h-4 w-4 animate-spin" />
