@@ -21,11 +21,16 @@
 
 ### 🤖 AI助手功能
 - **智能对话**：基于博客知识库的AI问答助手
-- **多模型支持**：支持OpenAI GPT和DeepSeek等多个AI服务商
+- **多模型支持**：支持OpenAI GPT、DeepSeek、Gemini、Claude、Qwen五大AI服务商
+- **对比模式**：同时调用多个AI模型进行对比回答，获得不同视角
 - **配置管理**：一次配置API密钥，永久使用AI功能
 - **知识问答**：专业的经济学概念解答和学习建议
 - **预设问题**：常见经济学问题快速提问
 - **上下文理解**：结合博客文章内容进行精准回答
+- **聊天记录**：自动保存对话历史，页面刷新后恢复
+- **对话管理**：复制单条消息、导出markdown格式聊天记录
+- **多行输入**：支持Enter发送、Shift+Enter换行的智能输入
+- **静态部署兼容**：客户端直接调用AI API，支持静态网站部署
 
 ### 🎨 现代化界面
 - **Apple 风格设计**：简洁优雅的用户界面
@@ -59,8 +64,12 @@
 ### AI服务集成
 - **OpenAI API**：ChatGPT智能问答服务
 - **DeepSeek API**：国产大模型服务
+- **Gemini API**：Google大模型服务
+- **Claude API**：Anthropic大模型服务
+- **Qwen API**：阿里巴巴大模型服务
 - **本地存储**：API密钥安全管理
 - **智能降级**：多服务商自动切换
+- **客户端调用**：前端直接调用AI API，无需服务器中转
 
 ### 开发工具
 - **ESLint**：代码规范检查
@@ -136,6 +145,7 @@ Blog/
 ├── content/                 # 内容文件
 │   └── articles/            # Markdown 文章
 ├── lib/                     # 工具库
+│   ├── aiClient.ts          # AI客户端调用库
 │   ├── data.ts              # 数据处理
 │   ├── markdown.ts          # Markdown 解析
 │   ├── utils.ts             # 通用工具
@@ -216,9 +226,12 @@ node scripts/update-images.js
 # Google Analytics (可选)
 NEXT_PUBLIC_GA_ID=your-ga-id
 
-# AI助手服务密钥 (可选，也可在前端配置)
+# AI助手服务密钥 (可选，推荐在前端配置)
 OPENAI_API_KEY=your-openai-api-key
 DEEPSEEK_API_KEY=your-deepseek-api-key
+GEMINI_API_KEY=your-gemini-api-key
+CLAUDE_API_KEY=your-claude-api-key
+QWEN_API_KEY=your-qwen-api-key
 
 # 其他配置...
 ```
@@ -246,6 +259,9 @@ DEEPSEEK_API_KEY=sk-xxx...
 **获取API密钥：**
 - OpenAI：[https://platform.openai.com/api-keys](https://platform.openai.com/api-keys)
 - DeepSeek：[https://platform.deepseek.com/api_keys](https://platform.deepseek.com/api_keys)
+- Gemini：[https://makersuite.google.com/app/apikey](https://makersuite.google.com/app/apikey)
+- Claude：[https://console.anthropic.com/](https://console.anthropic.com/)
+- Qwen：[https://dashscope.aliyun.com/api-key](https://dashscope.aliyun.com/api-key)
 
 ### SEO 配置
 在 `app/layout.tsx` 中修改网站元信息：
@@ -279,7 +295,7 @@ export const metadata: Metadata = {
 - **多语言支持**：国际化的经济学知识传播平台
 
 ### 技术演进路线
-1. **基础AI助手** ✅ (当前阶段)
+1. **基础AI助手** ✅ (已完成 - 支持5大AI服务商、对比模式、聊天记录等)
 2. **EconAI API集成** 🚧 (开发中)
 3. **智能推荐引擎** 📋 (规划中)
 4. **完整生态集成** 🎯 (未来目标)
@@ -291,6 +307,43 @@ export const metadata: Metadata = {
 - [知识库系统](./README-KNOWLEDGE-BASE.md)
 - [图片自动更新](./README-AUTO-IMAGES.md)
 - [AI助手开发指南](./README-AI-ASSISTANT.md) 📝 (待完善)
+
+## 🎯 AI助手使用指南
+
+### 快速开始
+1. 访问博客的"知识库"页面
+2. 点击"🤖 AI助手"标签页
+3. 首次使用需配置API密钥（点击右上角设置按钮）
+4. 开始与AI助手对话！
+
+### 功能特色
+- **🔀 对比模式**：开启后可同时获得多个AI模型的回答
+- **📋 复制对话**：鼠标悬停在消息上可快速复制单条对话
+- **📄 导出记录**：一键导出完整聊天历史为markdown文件
+- **💬 智能输入**：支持多行输入，Enter发送，Shift+Enter换行
+- **🔄 自动保存**：对话历史自动保存，刷新页面不丢失
+
+### 支持的AI服务商
+| 服务商 | 模型 | 特点 |
+|--------|------|------|
+| OpenAI | GPT-4 | 通用性强，回答质量高 |
+| DeepSeek | DeepSeek-Chat | 国产模型，理解中文较好 |
+| Gemini | Gemini-Pro | Google出品，逻辑推理强 |
+| Claude | Claude-3 | Anthropic出品，安全性高 |
+| Qwen | Qwen-Turbo | 阿里出品，中文优化 |
+
+### 配置说明
+AI助手支持两种配置方式：
+
+#### 用户配置（推荐）
+- 在网站前端配置个人API密钥
+- 数据存储在浏览器本地，安全可靠
+- 一次配置，永久使用
+
+#### 环境变量配置
+- 适合开发者统一配置
+- 用户无需额外设置即可使用
+- 需要在服务器端配置相应环境变量
 
 ## 🤝 贡献指南
 
@@ -321,6 +374,9 @@ export const metadata: Metadata = {
 - [Lucide](https://lucide.dev/) - 图标库
 - [OpenAI](https://openai.com/) - AI服务提供商
 - [DeepSeek](https://deepseek.com/) - 国产AI大模型
+- [Google Gemini](https://gemini.google.com/) - Google AI服务
+- [Anthropic Claude](https://claude.ai/) - Claude AI服务
+- [阿里云通义千问](https://tongyi.aliyun.com/) - 阿里云AI服务
 - [EconAI](https://econai.com) - 经济学AI生态合作伙伴
 
 ---

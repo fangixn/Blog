@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { Send, Bot, User, Loader2, Settings, GitCompare } from 'lucide-react';
+import { Send, Bot, User, Loader2, Settings, GitCompare, Trash2, History, Copy, Download, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -30,21 +30,169 @@ interface AIAssistantProps {
 }
 
 export default function AIAssistant({ articles }: AIAssistantProps) {
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: '1',
-      role: 'assistant',
-      content: '你好！我是经济学学习助手 🤖\n\n我可以帮助你：\n• 解答经济学概念和理论\n• 介绍经济学家和他们的贡献\n• 推荐相关学习资料\n• 解释文章中的经济学内容\n\n请随时向我提问！',
-      timestamp: new Date()
-    }
-  ]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [hasApiKeys, setHasApiKeys] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
   const [compareMode, setCompareMode] = useState(false);
+  const [copiedMessageId, setCopiedMessageId] = useState<string | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // 初始欢迎消息
+  const welcomeMessage: Message = {
+    id: 'welcome',
+    role: 'assistant',
+    content: '你好！我是经济学学习助手 🤖\n\n我可以帮助你：\n• 解答经济学概念和理论\n• 介绍经济学家和他们的贡献\n• 推荐相关学习资料\n• 解释文章中的经济学内容\n\n请随时向我提问！',
+    timestamp: new Date()
+  };
+
+  // 复制单条消息到剪贴板
+  const copyMessage = async (message: Message) => {
+    try {
+      let textToCopy = '';
+      
+      if (message.isCompareMode && message.compareResults) {
+        // 对比模式的消息
+        textToCopy = '## 多AI对比回答\n\n';
+        message.compareResults.forEach((result, index) => {
+          textToCopy += `### ${result.provider}\n`;
+          if (result.success) {
+            textToCopy += `${result.content}\n\n`;
+          } else {
+            textToCopy += `❌ ${result.error}\n\n`;
+          }
+        });
+        textToCopy += `*时间: ${message.timestamp.toLocaleString('zh-CN')}*`;
+      } else {
+        // 普通消息
+        const role = message.role === 'user' ? '👤 用户' : '🤖 AI助手';
+        textToCopy = `**${role}** (${message.timestamp.toLocaleString('zh-CN')})\n\n${message.content}`;
+      }
+      
+      await navigator.clipboard.writeText(textToCopy);
+      setCopiedMessageId(message.id);
+      
+      // 2秒后重置复制状态
+      setTimeout(() => {
+        setCopiedMessageId(null);
+      }, 2000);
+    } catch (error) {
+      console.error('复制失败:', error);
+      alert('复制失败，请手动选择文本复制');
+    }
+  };
+
+  // 导出聊天历史为Markdown格式
+  const exportChatHistory = () => {
+    try {
+      const chatMessages = messages.filter(msg => msg.id !== 'welcome');
+      
+      if (chatMessages.length === 0) {
+        alert('没有聊天记录可以导出');
+        return;
+      }
+
+      let markdown = `# AI助手聊天记录\n\n`;
+      markdown += `**导出时间**: ${new Date().toLocaleString('zh-CN')}\n`;
+      markdown += `**对话数量**: ${chatMessages.length} 条\n\n`;
+      markdown += `---\n\n`;
+
+      chatMessages.forEach((message, index) => {
+        const msgNumber = index + 1;
+        const timestamp = message.timestamp.toLocaleString('zh-CN');
+        
+        if (message.role === 'user') {
+          markdown += `## ${msgNumber}. 👤 用户提问\n\n`;
+          markdown += `**时间**: ${timestamp}\n\n`;
+          markdown += `${message.content}\n\n`;
+        } else if (message.isCompareMode && message.compareResults) {
+          markdown += `## ${msgNumber}. 🔍 多AI对比回答\n\n`;
+          markdown += `**时间**: ${timestamp}\n\n`;
+          
+          message.compareResults.forEach((result) => {
+            markdown += `### ${result.provider}\n\n`;
+            if (result.success) {
+              markdown += `${result.content}\n\n`;
+            } else {
+              markdown += `❌ **错误**: ${result.error}\n\n`;
+            }
+          });
+        } else {
+          markdown += `## ${msgNumber}. 🤖 AI回答\n\n`;
+          markdown += `**时间**: ${timestamp}\n\n`;
+          markdown += `${message.content}\n\n`;
+        }
+        
+        markdown += `---\n\n`;
+      });
+
+      markdown += `*此聊天记录由方馨博客AI助手导出*`;
+
+      // 创建并下载文件
+      const blob = new Blob([markdown], { type: 'text/markdown;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `AI助手聊天记录_${new Date().toISOString().slice(0, 19).replace(/:/g, '-')}.md`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+
+    } catch (error) {
+      console.error('导出失败:', error);
+      alert('导出失败，请稍后重试');
+    }
+  };
+
+  // 保存聊天记录到localStorage
+  const saveChatHistory = (messages: Message[]) => {
+    try {
+      // 过滤掉欢迎消息，只保存真实的对话
+      const chatMessages = messages.filter(msg => msg.id !== 'welcome');
+      const historyData = {
+        messages: chatMessages,
+        lastUpdated: new Date().toISOString()
+      };
+      localStorage.setItem('ai-chat-history', JSON.stringify(historyData));
+    } catch (error) {
+      console.error('Failed to save chat history:', error);
+    }
+  };
+
+  // 从localStorage加载聊天记录
+  const loadChatHistory = (): Message[] => {
+    try {
+      const saved = localStorage.getItem('ai-chat-history');
+      if (saved) {
+        const historyData = JSON.parse(saved);
+        const loadedMessages = historyData.messages?.map((msg: any) => ({
+          ...msg,
+          timestamp: new Date(msg.timestamp)
+        })) || [];
+        
+        // 如果有历史记录，返回历史记录；否则返回欢迎消息
+        return loadedMessages.length > 0 ? loadedMessages : [welcomeMessage];
+      }
+    } catch (error) {
+      console.error('Failed to load chat history:', error);
+    }
+    return [welcomeMessage];
+  };
+
+  // 清除聊天记录
+  const clearChatHistory = () => {
+    if (confirm('确定要清除所有聊天记录吗？此操作不可撤销。')) {
+      try {
+        localStorage.removeItem('ai-chat-history');
+        setMessages([welcomeMessage]);
+      } catch (error) {
+        console.error('Failed to clear chat history:', error);
+      }
+    }
+  };
 
   // 自动调整输入框高度
   const adjustTextareaHeight = () => {
@@ -86,7 +234,7 @@ export default function AIAssistant({ articles }: AIAssistantProps) {
     }
   };
 
-  // 检查本地存储的API密钥
+  // 检查本地存储的API密钥和加载聊天记录
   useEffect(() => {
     const checkApiKeys = () => {
       try {
@@ -104,8 +252,10 @@ export default function AIAssistant({ articles }: AIAssistantProps) {
       }
     };
 
-    // 初始检查
+    // 初始检查和加载历史记录
     checkApiKeys();
+    const history = loadChatHistory();
+    setMessages(history);
     setIsInitialized(true);
 
     // 监听存储变化事件
@@ -126,6 +276,13 @@ export default function AIAssistant({ articles }: AIAssistantProps) {
   useEffect(() => {
     adjustTextareaHeight();
   }, [inputMessage]);
+
+  // 当消息更新时保存聊天记录
+  useEffect(() => {
+    if (isInitialized && messages.length > 0) {
+      saveChatHistory(messages);
+    }
+  }, [messages, isInitialized]);
 
   // 预设问题
   const suggestedQuestions = [
@@ -290,16 +447,50 @@ export default function AIAssistant({ articles }: AIAssistantProps) {
                   <Bot className="h-8 w-8 mr-3" />
                   经济学AI助手
                 </div>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={handleOpenSettings}
-                  className="text-white hover:bg-white/20 rounded-xl"
-                >
-                  <Settings className="h-5 w-5" />
-                </Button>
+                <div className="flex items-center space-x-2">
+                  {/* 导出功能 */}
+                  {messages.length > 1 && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={exportChatHistory}
+                      className="text-white hover:bg-white/20 rounded-xl"
+                      title="导出聊天记录"
+                    >
+                      <Download className="h-4 w-4" />
+                    </Button>
+                  )}
+                  {/* 历史记录指示器 */}
+                  {messages.length > 1 && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={clearChatHistory}
+                      className="text-white hover:bg-white/20 rounded-xl"
+                      title="清除聊天记录"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  )}
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleOpenSettings}
+                    className="text-white hover:bg-white/20 rounded-xl"
+                  >
+                    <Settings className="h-5 w-5" />
+                  </Button>
+                </div>
               </CardTitle>
-              <p className="text-purple-100">基于方馨博客知识库的智能助手</p>
+              <div className="flex items-center justify-between">
+                <p className="text-purple-100">基于方馨博客知识库的智能助手</p>
+                {messages.length > 1 && (
+                  <div className="flex items-center space-x-2 text-purple-200">
+                    <History className="h-4 w-4" />
+                    <span className="text-sm">{messages.length - 1} 条对话</span>
+                  </div>
+                )}
+              </div>
             </CardHeader>
           </Card>
 
@@ -352,7 +543,7 @@ export default function AIAssistant({ articles }: AIAssistantProps) {
             {/* 用户消息 */}
             {message.role === 'user' && (
               <div className="flex justify-end">
-                <div className="max-w-xs lg:max-w-md px-4 py-3 rounded-2xl bg-purple-600 text-white">
+                <div className="max-w-xs lg:max-w-md px-4 py-3 rounded-2xl bg-purple-600 text-white relative group">
                   <div className="flex items-start space-x-2">
                     <User className="h-4 w-4 mt-1 flex-shrink-0 text-white" />
                     <div className="flex-1">
@@ -365,19 +556,49 @@ export default function AIAssistant({ articles }: AIAssistantProps) {
                       </p>
                     </div>
                   </div>
+                  {/* 复制按钮 */}
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => copyMessage(message)}
+                    className="absolute top-2 right-2 h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity text-white hover:bg-white/20"
+                    title="复制消息"
+                  >
+                    {copiedMessageId === message.id ? (
+                      <Check className="h-3 w-3" />
+                    ) : (
+                      <Copy className="h-3 w-3" />
+                    )}
+                  </Button>
                 </div>
               </div>
             )}
 
             {/* AI回答 - 对比模式 */}
             {message.role === 'assistant' && message.isCompareMode && (
-              <div className="space-y-3">
-                <div className="flex items-center space-x-2 text-sm text-gray-600 mb-3">
-                  <GitCompare className="h-4 w-4" />
-                  <span>多AI对比回答</span>
-                  <Badge variant="outline" className="text-xs">
-                    {message.compareResults?.filter(r => r.success).length || 0}/{message.compareResults?.length || 0} 成功
-                  </Badge>
+              <div className="space-y-3 relative group">
+                <div className="flex items-center justify-between text-sm text-gray-600 mb-3">
+                  <div className="flex items-center space-x-2">
+                    <GitCompare className="h-4 w-4" />
+                    <span>多AI对比回答</span>
+                    <Badge variant="outline" className="text-xs">
+                      {message.compareResults?.filter(r => r.success).length || 0}/{message.compareResults?.length || 0} 成功
+                    </Badge>
+                  </div>
+                  {/* 复制按钮 */}
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => copyMessage(message)}
+                    className="opacity-0 group-hover:opacity-100 transition-opacity text-gray-500 hover:text-gray-700 hover:bg-gray-100 h-6 w-6 p-0"
+                    title="复制对比回答"
+                  >
+                    {copiedMessageId === message.id ? (
+                      <Check className="h-3 w-3" />
+                    ) : (
+                      <Copy className="h-3 w-3" />
+                    )}
+                  </Button>
                 </div>
                 
                 {message.compareResults?.map((result, index) => (
@@ -421,7 +642,7 @@ export default function AIAssistant({ articles }: AIAssistantProps) {
             {/* AI回答 - 单一模式 */}
             {message.role === 'assistant' && !message.isCompareMode && (
               <div className="flex justify-start">
-                <div className="max-w-xs lg:max-w-md px-4 py-3 rounded-2xl bg-white border border-gray-200 text-gray-900">
+                <div className="max-w-xs lg:max-w-md px-4 py-3 rounded-2xl bg-white border border-gray-200 text-gray-900 relative group">
                   <div className="flex items-start space-x-2">
                     <Bot className="h-4 w-4 mt-1 flex-shrink-0 text-purple-600" />
                     <div className="flex-1">
@@ -434,6 +655,20 @@ export default function AIAssistant({ articles }: AIAssistantProps) {
                       </p>
                     </div>
                   </div>
+                  {/* 复制按钮 */}
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => copyMessage(message)}
+                    className="absolute top-2 right-2 h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity text-gray-500 hover:text-gray-700 hover:bg-gray-100"
+                    title="复制消息"
+                  >
+                    {copiedMessageId === message.id ? (
+                      <Check className="h-3 w-3" />
+                    ) : (
+                      <Copy className="h-3 w-3" />
+                    )}
+                  </Button>
                 </div>
               </div>
             )}
