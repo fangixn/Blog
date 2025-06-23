@@ -3,14 +3,17 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { getAllArticles, getRelatedArticles, type Article } from '@/lib/data';
+import { getAllMarkdownArticles, getMarkdownArticle } from '@/lib/markdown';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import ArticlePageClient from './ArticlePageClient';
 
 // 生成静态路径
 export async function generateStaticParams() {
-  const articles = getAllArticles();
-  return articles.map((article) => ({
+  // 只使用markdown文件的文章
+  const markdownArticles = getAllMarkdownArticles();
+  
+  return markdownArticles.map((article) => ({
     id: article.id,
   }));
 }
@@ -22,8 +25,9 @@ interface ArticlePageProps {
 }
 
 export default function ArticlePage({ params }: ArticlePageProps) {
-  const allArticles = getAllArticles();
-  const article = allArticles.find(a => a.id === params.id);
+  // 只在markdown文件中查找文章
+  const markdownArticles = getAllMarkdownArticles();
+  const article = markdownArticles.find(a => a.id === params.id);
   
   if (!article) {
     return (
@@ -44,6 +48,7 @@ export default function ArticlePage({ params }: ArticlePageProps) {
     );
   }
 
+  // 获取相关文章（只使用markdown文章）
   const relatedArticles = getRelatedArticles(article, 3);
 
   return <ArticlePageClient article={article} relatedArticles={relatedArticles} />;

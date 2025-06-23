@@ -17,6 +17,20 @@ interface ArticlePageClientProps {
 export default function ArticlePageClient({ article, relatedArticles }: ArticlePageClientProps) {
   const router = useRouter();
 
+  const handleBack = () => {
+    // 尝试返回上一页，如果没有历史记录则返回首页
+    if (typeof window !== 'undefined') {
+      const referrer = document.referrer;
+      if (referrer && referrer.includes(window.location.origin)) {
+        router.back();
+      } else {
+        router.push('/');
+      }
+    } else {
+      router.push('/');
+    }
+  };
+
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('zh-CN', {
       year: 'numeric',
@@ -63,13 +77,7 @@ export default function ArticlePageClient({ article, relatedArticles }: ArticleP
         <div className="mb-8">
           <Button
             variant="ghost"
-            onClick={() => {
-              if (window.history.length > 1) {
-                router.back();
-              } else {
-                router.push('/');
-              }
-            }}
+            onClick={handleBack}
             className="text-purple-600 hover:text-purple-700 hover:bg-purple-50 rounded-2xl"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />

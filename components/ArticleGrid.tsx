@@ -11,15 +11,17 @@ import { getAllArticles, searchArticles, type Article } from '@/lib/data';
 interface ArticleGridProps {
   selectedCategory: string;
   selectedTags: string[];
+  initialArticles?: Article[]; // 允许传入初始文章数据
 }
 
-export default function ArticleGrid({ selectedCategory, selectedTags }: ArticleGridProps) {
+export default function ArticleGrid({ selectedCategory, selectedTags, initialArticles }: ArticleGridProps) {
   const router = useRouter();
   const [visibleCount, setVisibleCount] = useState(6);
   const [searchQuery, setSearchQuery] = useState('');
 
   const filteredArticles = useMemo(() => {
-    let articles = getAllArticles();
+    // 使用传入的文章数据，如果没有则使用默认的静态数据
+    let articles = initialArticles || getAllArticles();
     
     // 应用分类过滤
     if (selectedCategory !== 'all') {
@@ -57,7 +59,7 @@ export default function ArticleGrid({ selectedCategory, selectedTags }: ArticleG
     return articles.sort((a, b) => 
       new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
     );
-  }, [selectedCategory, selectedTags, searchQuery]);
+  }, [selectedCategory, selectedTags, searchQuery, initialArticles]);
 
   const visibleArticles = filteredArticles.slice(0, visibleCount);
   const hasMore = visibleCount < filteredArticles.length;
