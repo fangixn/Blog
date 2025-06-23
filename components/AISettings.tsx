@@ -11,7 +11,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 interface ApiKeyConfig {
   openai?: string;
+  gemini?: string;
   deepseek?: string;
+  claude?: string;
+  qwen?: string;
 }
 
 interface AISettingsProps {
@@ -100,12 +103,25 @@ export default function AISettings({ onConfigChange, onClose }: AISettingsProps)
       });
 
       if (response.ok) {
+        const result = await response.json();
+        console.log(`${provider} 测试成功:`, result);
         setTestResults(prev => ({ ...prev, [provider]: 'success' }));
       } else {
+        const errorData = await response.json();
+        console.error(`${provider} 测试失败:`, errorData);
         setTestResults(prev => ({ ...prev, [provider]: 'error' }));
+        
+        // 显示详细错误信息
+        if (errorData.details) {
+          alert(`测试失败: ${errorData.error}\n详细信息: ${errorData.details}`);
+        } else {
+          alert(`测试失败: ${errorData.error || '未知错误'}`);
+        }
       }
     } catch (error) {
+      console.error(`${provider} 测试异常:`, error);
       setTestResults(prev => ({ ...prev, [provider]: 'error' }));
+      alert(`网络错误: ${error instanceof Error ? error.message : '连接失败'}`);
     }
   };
 
@@ -125,18 +141,42 @@ export default function AISettings({ onConfigChange, onClose }: AISettingsProps)
     {
       id: 'openai',
       name: 'ChatGPT',
-      description: 'OpenAI GPT-3.5',
+      description: 'OpenAI GPT-4o-mini',
       placeholder: 'sk-...',
       helpUrl: 'https://platform.openai.com/api-keys',
       color: 'bg-green-500'
     },
     {
+      id: 'gemini',
+      name: 'Google Gemini',
+      description: 'Gemini 1.5 Flash',
+      placeholder: 'AIza...',
+      helpUrl: 'https://makersuite.google.com/app/apikey',
+      color: 'bg-orange-500'
+    },
+    {
       id: 'deepseek',
       name: 'DeepSeek',
-      description: 'DeepSeek AI Model',
+      description: 'DeepSeek v2',
       placeholder: 'sk-...',
       helpUrl: 'https://platform.deepseek.com/api_keys',
       color: 'bg-blue-500'
+    },
+    {
+      id: 'claude',
+      name: 'Claude',
+      description: 'Claude 3.5 Sonnet',
+      placeholder: 'sk-ant-...',
+      helpUrl: 'https://console.anthropic.com/account/keys',
+      color: 'bg-purple-500'
+    },
+    {
+      id: 'qwen',
+      name: '通义千问',
+      description: 'Qwen-Max',
+      placeholder: 'sk-...',
+      helpUrl: 'https://dashscope.console.aliyun.com/apiKey',
+      color: 'bg-red-500'
     }
   ];
 
@@ -153,7 +193,7 @@ export default function AISettings({ onConfigChange, onClose }: AISettingsProps)
             className="group bg-white/90 backdrop-blur-sm border-2 border-purple-200 text-purple-700 hover:text-white hover:bg-purple-600 hover:border-purple-600 rounded-2xl px-6 py-3 text-base font-medium shadow-lg hover:shadow-xl transition-all duration-300 ease-in-out transform hover:scale-105 active:scale-95"
           >
             <ArrowLeft className="h-5 w-5 mr-2 transition-transform duration-300 group-hover:-translate-x-1" />
-            返回AI助手
+            返回
           </Button>
         </div>
       )}
@@ -184,7 +224,22 @@ export default function AISettings({ onConfigChange, onClose }: AISettingsProps)
         <Alert className="mb-6 border-green-200 bg-green-50">
           <CheckCircle2 className="h-4 w-4" />
           <AlertDescription>
-            <strong>配置已保存：</strong>您已配置了AI服务密钥，可以正常使用AI助手功能。
+            <div>
+              <strong>配置已保存：</strong>您已配置了以下AI服务密钥：
+              <div className="mt-2 flex flex-wrap gap-2">
+                {Object.entries(apiKeys).map(([provider, key]) => {
+                  if (key && typeof key === 'string' && key.trim().length > 0) {
+                    const providerName = providers.find(p => p.id === provider)?.name || provider;
+                    return (
+                      <Badge key={provider} className="bg-green-100 text-green-700">
+                        {providerName}
+                      </Badge>
+                    );
+                  }
+                  return null;
+                })}
+              </div>
+            </div>
           </AlertDescription>
         </Alert>
       )}

@@ -1,12 +1,13 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Send, Bot, User, Loader2, Settings } from 'lucide-react';
+import { Send, Bot, User, Loader2, Settings, GitCompare } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Switch } from '@/components/ui/switch';
 import { type Article } from '@/lib/data';
 import AISettings from './AISettings';
 
@@ -35,6 +36,7 @@ export default function AIAssistant({ articles }: AIAssistantProps) {
   const [hasApiKeys, setHasApiKeys] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
+  const [compareMode, setCompareMode] = useState(false);
 
   // 检查本地存储的API密钥
   useEffect(() => {
@@ -98,7 +100,7 @@ export default function AIAssistant({ articles }: AIAssistantProps) {
     try {
       // 获取本地存储的API密钥
       const savedKeys = localStorage.getItem('ai-api-keys');
-      let apiKeys = {};
+      let apiKeys: Record<string, string> = {};
       if (savedKeys) {
         try {
           apiKeys = JSON.parse(savedKeys);
@@ -107,43 +109,72 @@ export default function AIAssistant({ articles }: AIAssistantProps) {
         }
       }
 
-      // 调用AI API
+      // 构建请求头，将API密钥放在头部
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+      };
+
+      // 为每个提供商添加API密钥到头部
+      Object.entries(apiKeys).forEach(([provider, key]) => {
+        if (key && key.trim()) {
+          headers[`x-${provider}-key`] = key;
+        }
+      });
+
+      // 调用AI API（新格式）
       const response = await fetch('/api/ai-chat', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers,
         body: JSON.stringify({
           message: inputMessage,
-          apiKeys: apiKeys, // 传递API密钥
-          articles: articles.map(article => ({
-            title: article.title,
-            excerpt: article.excerpt,
-            content: article.content.slice(0, 1000), // 限制长度
-            tags: article.tags
-          }))
+          compareMode: compareMode
         }),
       });
 
       if (!response.ok) {
-        throw new Error('AI助手暂时无法回答，请稍后再试');
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'AI助手暂时无法回答，请稍后再试');
       }
 
       const data = await response.json();
       
+      let assistantContent = '';
+      
+      if (data.compareMode) {
+        // 对比模式响应
+        assistantContent = '🔍 **多AI对比回答**\n\n';
+        data.results?.forEach((result: any, index: number) => {
+          if (result.success) {
+            assistantContent += `**${result.provider}:**\n${result.content}\n\n`;
+          } else {
+            assistantContent += `**${result.provider}:** ❌ ${result.error}\n\n`;
+          }
+        });
+        assistantContent += `📊 成功: ${data.summary?.successful}/${data.summary?.total}`;
+      } else {
+        // 单一模式响应
+        assistantContent = data.reply;
+        if (data.provider) {
+          assistantContent += `\n\n*由 ${data.provider} 提供回答*`;
+          if (data.isBackup) {
+            assistantContent += ` (备用)`;
+          }
+        }
+      }
+      
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content: data.message,
+        content: assistantContent,
         timestamp: new Date()
       };
 
       setMessages(prev => [...prev, assistantMessage]);
-    } catch (error) {
+    } catch (error: any) {
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content: '抱歉，我现在无法回答您的问题。您可以尝试：\n• 检查网络连接\n• 稍后再试\n• 或者直接浏览知识库中的相关文章',
+        content: `抱歉，我现在无法回答您的问题。\n\n错误详情：${error.message}\n\n您可以尝试：\n• 检查API密钥配置\n• 检查网络连接\n• 稍后再试\n• 或者直接浏览知识库中的相关文章`,
         timestamp: new Date()
       };
 
@@ -303,9 +334,15 @@ export default function AIAssistant({ articles }: AIAssistantProps) {
           <div className="flex justify-start">
             <div className="bg-white border border-gray-200 rounded-2xl px-4 py-3">
               <div className="flex items-center space-x-2">
-                <Bot className="h-4 w-4 text-purple-600" />
+                {compareMode ? (
+                  <GitCompare className="h-4 w-4 text-purple-600" />
+                ) : (
+                  <Bot className="h-4 w-4 text-purple-600" />
+                )}
                 <Loader2 className="h-4 w-4 animate-spin text-purple-600" />
-                <span className="text-sm text-gray-600">正在思考...</span>
+                <span className="text-sm text-gray-600">
+                  {compareMode ? '正在对比多个AI的回答...' : '正在思考...'}
+                </span>
               </div>
             </div>
           </div>
@@ -314,6 +351,24 @@ export default function AIAssistant({ articles }: AIAssistantProps) {
 
       {/* 输入框 */}
       <div className="sticky bottom-0 bg-white/80 backdrop-blur-md rounded-3xl p-4 border border-white/20 shadow-lg">
+        {/* 对比模式开关 */}
+        {hasApiKeys && (
+          <div className="flex items-center justify-center mb-3 pb-3 border-b border-gray-200">
+            <div className="flex items-center space-x-3">
+              <GitCompare className="h-4 w-4 text-purple-600" />
+              <span className="text-sm text-gray-700">对比模式</span>
+              <Switch
+                checked={compareMode}
+                onCheckedChange={setCompareMode}
+                className="data-[state=checked]:bg-purple-600"
+              />
+              <span className="text-xs text-gray-500">
+                {compareMode ? '多AI对比回答' : '单一AI回答'}
+              </span>
+            </div>
+          </div>
+        )}
+
         <div className="flex space-x-3">
           <Input
             value={inputMessage}
@@ -336,12 +391,24 @@ export default function AIAssistant({ articles }: AIAssistantProps) {
           </Button>
         </div>
         
-        <div className="mt-3 flex items-center justify-between text-xs text-gray-500">
-          <span>💡 提示：按Enter发送，Shift+Enter换行</span>
-          <Badge variant="outline" className="text-purple-600 border-purple-200">
-            基于 {articles.length} 篇文章
-          </Badge>
-        </div>
+                  <div className="mt-3 flex items-center justify-between text-xs text-gray-500">
+            <span>💡 提示：按Enter发送，Shift+Enter换行</span>
+            <div className="flex items-center space-x-2">
+              <Badge variant="outline" className="text-purple-600 border-purple-200">
+                基于 {articles.length} 篇文章
+              </Badge>
+              {hasApiKeys && (
+                <Badge variant="outline" className="text-green-600 border-green-200">
+                  AI 已配置
+                </Badge>
+              )}
+              {hasApiKeys && compareMode && (
+                <Badge variant="outline" className="text-orange-600 border-orange-200">
+                  对比模式
+                </Badge>
+              )}
+            </div>
+          </div>
       </div>
         </>
       )}
