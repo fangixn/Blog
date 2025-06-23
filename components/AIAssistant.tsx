@@ -34,6 +34,7 @@ export default function AIAssistant({ articles }: AIAssistantProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [hasApiKeys, setHasApiKeys] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
+  const [isInitialized, setIsInitialized] = useState(false);
 
   // 检查本地存储的API密钥
   useEffect(() => {
@@ -55,6 +56,7 @@ export default function AIAssistant({ articles }: AIAssistantProps) {
 
     // 初始检查
     checkApiKeys();
+    setIsInitialized(true);
 
     // 监听存储变化事件
     const handleStorageUpdate = () => {
@@ -163,10 +165,12 @@ export default function AIAssistant({ articles }: AIAssistantProps) {
   };
 
   // 处理配置变化
-  const handleConfigChange = (hasValidConfig: boolean) => {
+  const handleConfigChange = (hasValidConfig: boolean, shouldClose: boolean = false) => {
+    console.log('handleConfigChange called:', { hasValidConfig, shouldClose, isInitialized });
     setHasApiKeys(hasValidConfig);
-    if (hasValidConfig) {
-      // 延迟关闭设置页面，确保状态已更新
+    // 只有在明确要求关闭时才关闭设置页面
+    if (shouldClose && hasValidConfig && isInitialized) {
+      console.log('Closing settings page');
       setTimeout(() => {
         setShowSettings(false);
       }, 100);
@@ -175,6 +179,7 @@ export default function AIAssistant({ articles }: AIAssistantProps) {
 
   // 打开设置页面
   const handleOpenSettings = () => {
+    console.log('Opening settings page');
     setShowSettings(true);
   };
 

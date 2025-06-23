@@ -15,7 +15,7 @@ interface ApiKeyConfig {
 }
 
 interface AISettingsProps {
-  onConfigChange?: (hasValidConfig: boolean) => void;
+  onConfigChange?: (hasValidConfig: boolean, shouldClose?: boolean) => void;
   onClose?: () => void;
 }
 
@@ -33,15 +33,14 @@ export default function AISettings({ onConfigChange, onClose }: AISettingsProps)
         if (savedKeys) {
           const parsed = JSON.parse(savedKeys);
           setApiKeys(parsed);
-          // 通知父组件有配置
+          // 仅在初始化时通知父组件有配置，不触发关闭
           const hasValidConfig = Object.values(parsed).some(key => key && typeof key === 'string' && key.trim().length > 0);
-          onConfigChange?.(hasValidConfig);
-        } else {
-          onConfigChange?.(false);
+          if (onConfigChange) {
+            onConfigChange(hasValidConfig, false);
+          }
         }
       } catch (error) {
         console.error('Failed to parse saved API keys:', error);
-        onConfigChange?.(false);
       }
     };
 
@@ -56,7 +55,7 @@ export default function AISettings({ onConfigChange, onClose }: AISettingsProps)
       
       // 通知父组件配置变化
       const hasValidConfig = Object.values(apiKeys).some(key => key && typeof key === 'string' && key.trim().length > 0);
-      onConfigChange?.(hasValidConfig);
+      onConfigChange?.(hasValidConfig, true); // 保存时才请求关闭
       
       // 触发存储事件，通知其他组件
       window.dispatchEvent(new Event('ai-keys-updated'));
@@ -75,7 +74,7 @@ export default function AISettings({ onConfigChange, onClose }: AISettingsProps)
     setApiKeys({});
     localStorage.removeItem('ai-api-keys');
     setTestResults({});
-    onConfigChange?.(false);
+    onConfigChange?.(false, false);
     
     // 触发存储事件，通知其他组件
     window.dispatchEvent(new Event('ai-keys-updated'));
