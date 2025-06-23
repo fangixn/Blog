@@ -38,22 +38,36 @@ export default function AIAssistant({ articles }: AIAssistantProps) {
   // 检查本地存储的API密钥
   useEffect(() => {
     const checkApiKeys = () => {
-      const savedKeys = localStorage.getItem('ai-api-keys');
-      if (savedKeys) {
-        try {
+      try {
+        const savedKeys = localStorage.getItem('ai-api-keys');
+        if (savedKeys) {
           const parsed = JSON.parse(savedKeys);
           const hasValidConfig = Object.values(parsed).some(key => key && typeof key === 'string' && key.trim().length > 0);
           setHasApiKeys(hasValidConfig);
-        } catch (error) {
-          console.error('Failed to parse saved API keys:', error);
+        } else {
           setHasApiKeys(false);
         }
-      } else {
+      } catch (error) {
+        console.error('Failed to parse saved API keys:', error);
         setHasApiKeys(false);
       }
     };
 
+    // 初始检查
     checkApiKeys();
+
+    // 监听存储变化事件
+    const handleStorageUpdate = () => {
+      checkApiKeys();
+    };
+
+    window.addEventListener('ai-keys-updated', handleStorageUpdate);
+    window.addEventListener('storage', handleStorageUpdate);
+
+    return () => {
+      window.removeEventListener('ai-keys-updated', handleStorageUpdate);
+      window.removeEventListener('storage', handleStorageUpdate);
+    };
   }, []);
 
   // 预设问题
@@ -152,59 +166,75 @@ export default function AIAssistant({ articles }: AIAssistantProps) {
   const handleConfigChange = (hasValidConfig: boolean) => {
     setHasApiKeys(hasValidConfig);
     if (hasValidConfig) {
-      setShowSettings(false);
+      // 延迟关闭设置页面，确保状态已更新
+      setTimeout(() => {
+        setShowSettings(false);
+      }, 100);
     }
   };
 
-  // 如果显示设置页面
-  if (showSettings) {
-    return <AISettings onConfigChange={handleConfigChange} />;
-  }
+  // 打开设置页面
+  const handleOpenSettings = () => {
+    setShowSettings(true);
+  };
+
+  // 关闭设置页面
+  const handleCloseSettings = () => {
+    setShowSettings(false);
+  };
 
   return (
     <div className="max-w-4xl mx-auto">
-      {/* AI助手介绍卡片 */}
-      <Card className="mb-8 glass-effect border-0 rounded-3xl shadow-lg">
-        <CardHeader className="bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-t-3xl">
-          <CardTitle className="flex items-center justify-between text-2xl">
-            <div className="flex items-center">
-              <Bot className="h-8 w-8 mr-3" />
-              经济学AI助手
-            </div>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setShowSettings(true)}
-              className="text-white hover:bg-white/20 rounded-xl"
-            >
-              <Settings className="h-5 w-5" />
-            </Button>
-          </CardTitle>
-          <p className="text-purple-100">基于方馨博客知识库的智能助手</p>
-        </CardHeader>
-      </Card>
+      {/* 条件渲染：设置页面或AI助手主界面 */}
+      {showSettings ? (
+        <AISettings 
+          onConfigChange={handleConfigChange} 
+          onClose={handleCloseSettings}
+        />
+      ) : (
+        <>
+          {/* AI助手介绍卡片 */}
+          <Card className="mb-8 glass-effect border-0 rounded-3xl shadow-lg">
+            <CardHeader className="bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-t-3xl">
+              <CardTitle className="flex items-center justify-between text-2xl">
+                <div className="flex items-center">
+                  <Bot className="h-8 w-8 mr-3" />
+                  经济学AI助手
+                </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleOpenSettings}
+                  className="text-white hover:bg-white/20 rounded-xl"
+                >
+                  <Settings className="h-5 w-5" />
+                </Button>
+              </CardTitle>
+              <p className="text-purple-100">基于方馨博客知识库的智能助手</p>
+            </CardHeader>
+          </Card>
 
-      {/* 配置提示 */}
-      {!hasApiKeys && (
-        <Alert className="mb-6 border-amber-200 bg-amber-50">
-          <Settings className="h-4 w-4" />
-          <AlertDescription>
-            <div className="flex items-center justify-between">
-              <span>
-                <strong>需要配置：</strong>请先配置AI服务密钥才能使用智能问答功能。
-              </span>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setShowSettings(true)}
-                className="ml-4 border-amber-300 text-amber-700 hover:bg-amber-100 rounded-xl"
-              >
-                立即配置
-              </Button>
-            </div>
-          </AlertDescription>
-        </Alert>
-      )}
+          {/* 配置提示 */}
+          {!hasApiKeys && (
+            <Alert className="mb-6 border-amber-200 bg-amber-50">
+              <Settings className="h-4 w-4" />
+              <AlertDescription>
+                <div className="flex items-center justify-between">
+                  <span>
+                    <strong>需要配置：</strong>请先配置AI服务密钥才能使用智能问答功能。
+                  </span>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleOpenSettings}
+                    className="ml-4 border-amber-300 text-amber-700 hover:bg-amber-100 rounded-xl"
+                  >
+                    立即配置
+                  </Button>
+                </div>
+              </AlertDescription>
+            </Alert>
+          )}
 
       {/* 预设问题 */}
       {hasApiKeys && messages.length === 1 && (
@@ -308,6 +338,8 @@ export default function AIAssistant({ articles }: AIAssistantProps) {
           </Badge>
         </div>
       </div>
+        </>
+      )}
     </div>
   );
 } 

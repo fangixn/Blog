@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Settings, Eye, EyeOff, Save, Trash2, AlertCircle, CheckCircle2, Key } from 'lucide-react';
+import { Settings, Eye, EyeOff, Save, Trash2, AlertCircle, CheckCircle2, Key, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -16,9 +16,10 @@ interface ApiKeyConfig {
 
 interface AISettingsProps {
   onConfigChange?: (hasValidConfig: boolean) => void;
+  onClose?: () => void;
 }
 
-export default function AISettings({ onConfigChange }: AISettingsProps) {
+export default function AISettings({ onConfigChange, onClose }: AISettingsProps) {
   const [apiKeys, setApiKeys] = useState<ApiKeyConfig>({});
   const [showKeys, setShowKeys] = useState<Record<string, boolean>>({});
   const [isSaving, setIsSaving] = useState(false);
@@ -26,19 +27,26 @@ export default function AISettings({ onConfigChange }: AISettingsProps) {
 
   // 从本地存储加载配置
   useEffect(() => {
-    const savedKeys = localStorage.getItem('ai-api-keys');
-    if (savedKeys) {
+    const loadSavedKeys = () => {
       try {
-        const parsed = JSON.parse(savedKeys);
-        setApiKeys(parsed);
-        // 通知父组件有配置
-        const hasValidConfig = Object.values(parsed).some(key => key && typeof key === 'string' && key.trim().length > 0);
-        onConfigChange?.(hasValidConfig);
+        const savedKeys = localStorage.getItem('ai-api-keys');
+        if (savedKeys) {
+          const parsed = JSON.parse(savedKeys);
+          setApiKeys(parsed);
+          // 通知父组件有配置
+          const hasValidConfig = Object.values(parsed).some(key => key && typeof key === 'string' && key.trim().length > 0);
+          onConfigChange?.(hasValidConfig);
+        } else {
+          onConfigChange?.(false);
+        }
       } catch (error) {
         console.error('Failed to parse saved API keys:', error);
+        onConfigChange?.(false);
       }
-    }
-  }, [onConfigChange]);
+    };
+
+    loadSavedKeys();
+  }, []); // 移除onConfigChange依赖，避免无限循环
 
   // 保存API密钥到本地存储
   const saveApiKeys = () => {
@@ -49,6 +57,9 @@ export default function AISettings({ onConfigChange }: AISettingsProps) {
       // 通知父组件配置变化
       const hasValidConfig = Object.values(apiKeys).some(key => key && typeof key === 'string' && key.trim().length > 0);
       onConfigChange?.(hasValidConfig);
+      
+      // 触发存储事件，通知其他组件
+      window.dispatchEvent(new Event('ai-keys-updated'));
       
       setTimeout(() => {
         setIsSaving(false);
@@ -65,6 +76,9 @@ export default function AISettings({ onConfigChange }: AISettingsProps) {
     localStorage.removeItem('ai-api-keys');
     setTestResults({});
     onConfigChange?.(false);
+    
+    // 触发存储事件，通知其他组件
+    window.dispatchEvent(new Event('ai-keys-updated'));
   };
 
   // 测试API密钥
@@ -131,6 +145,20 @@ export default function AISettings({ onConfigChange }: AISettingsProps) {
 
   return (
     <div className="max-w-4xl mx-auto">
+      {/* 返回按钮 */}
+      {onClose && (
+        <div className="mb-6">
+          <Button
+            variant="outline"
+            onClick={onClose}
+            className="group bg-white/90 backdrop-blur-sm border-2 border-purple-200 text-purple-700 hover:text-white hover:bg-purple-600 hover:border-purple-600 rounded-2xl px-6 py-3 text-base font-medium shadow-lg hover:shadow-xl transition-all duration-300 ease-in-out transform hover:scale-105 active:scale-95"
+          >
+            <ArrowLeft className="h-5 w-5 mr-2 transition-transform duration-300 group-hover:-translate-x-1" />
+            返回AI助手
+          </Button>
+        </div>
+      )}
+
       {/* 设置标题 */}
       <Card className="mb-8 glass-effect border-0 rounded-3xl shadow-lg">
         <CardHeader className="bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-t-3xl">
