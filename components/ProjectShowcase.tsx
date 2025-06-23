@@ -5,13 +5,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { projects } from '@/lib/data';
-import { Language, defaultLanguage } from '@/lib/i18n';
 
-interface ProjectShowcaseProps {
-  currentLanguage?: Language;
-}
-
-export default function ProjectShowcase({ currentLanguage = defaultLanguage }: ProjectShowcaseProps) {
+export default function ProjectShowcase() {
   const [hoveredProject, setHoveredProject] = useState<string | null>(null);
 
   const featuredProjects = projects.filter(project => project.featured);

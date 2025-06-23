@@ -3,7 +3,6 @@ import { useState } from 'react';
 import { TrendingUp, BookOpen, Code, Brain, PenTool, Filter } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { categories } from '@/lib/data';
-import { Language, defaultLanguage } from '@/lib/i18n';
 
 const iconMap = {
   TrendingUp,
@@ -18,15 +17,13 @@ interface CategoryNavProps {
   onCategoryChange: (category: string) => void;
   selectedTags: string[];
   onTagsChange: (tags: string[]) => void;
-  currentLanguage?: Language;
 }
 
 export default function CategoryNav({ 
   selectedCategory, 
   onCategoryChange, 
   selectedTags, 
-  onTagsChange,
-  currentLanguage = defaultLanguage
+  onTagsChange
 }: CategoryNavProps) {
   const [showTagFilter, setShowTagFilter] = useState(false);
   

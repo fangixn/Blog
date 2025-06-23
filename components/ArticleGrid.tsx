@@ -7,15 +7,13 @@ import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { getAllArticles, searchArticles, type Article } from '@/lib/data';
-import { Language, defaultLanguage, getTranslation } from '@/lib/i18n';
 
 interface ArticleGridProps {
   selectedCategory: string;
   selectedTags: string[];
-  currentLanguage?: Language;
 }
 
-export default function ArticleGrid({ selectedCategory, selectedTags, currentLanguage = defaultLanguage }: ArticleGridProps) {
+export default function ArticleGrid({ selectedCategory, selectedTags }: ArticleGridProps) {
   const router = useRouter();
   const [visibleCount, setVisibleCount] = useState(6);
   const [searchQuery, setSearchQuery] = useState('');
@@ -89,7 +87,7 @@ export default function ArticleGrid({ selectedCategory, selectedTags, currentLan
         {/* Section Header */}
         <div className="text-center mb-16">
           <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-6 animate-fade-in">
-            {getTranslation(currentLanguage, 'articles.title')}
+            最新文章
           </h2>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto animate-slide-up" style={{ animationDelay: '0.2s' }}>
             {filteredArticles.length > 0 
@@ -202,57 +200,49 @@ export default function ArticleGrid({ selectedCategory, selectedTags, currentLan
                       </h3>
                     </CardHeader>
 
-                    <CardContent className="pb-6">
-                      {/* Excerpt */}
-                      <p className="text-gray-600 line-clamp-3 leading-relaxed mb-6">
+                    <CardContent className="py-4">
+                      <p className="text-gray-600 line-clamp-3 leading-relaxed mb-4">
                         {article.excerpt}
                       </p>
-
+                      
                       {/* Tags */}
                       <div className="flex flex-wrap gap-2 mb-4">
-                        {article.tags.slice(0, 3).map((tag: string) => (
-                          <span
-                            key={tag}
-                            className="inline-flex items-center px-3 py-1.5 rounded-2xl text-xs font-medium bg-white/80 text-purple-700 hover:bg-purple-100 hover:text-purple-800 transition-colors cursor-pointer border border-purple-200"
+                        {article.tags.slice(0, 3).map((tag, tagIndex) => (
+                          <Badge 
+                            key={tagIndex} 
+                            variant="outline" 
+                            className="text-xs border-purple-200 text-purple-600 hover:bg-purple-50 rounded-xl"
                           >
-                            <Tag className="h-3 w-3 mr-1" />
                             {tag}
-                          </span>
+                          </Badge>
                         ))}
                         {article.tags.length > 3 && (
-                          <span className="text-xs text-purple-500 font-medium">
+                          <Badge 
+                            variant="outline" 
+                            className="text-xs border-purple-200 text-purple-600 hover:bg-purple-50 rounded-xl"
+                          >
                             +{article.tags.length - 3}
-                          </span>
+                          </Badge>
                         )}
                       </div>
                     </CardContent>
 
-                    <CardFooter className="pt-6 border-t border-purple-100/50">
-                      <div className="flex items-center justify-between w-full">
-                        {/* Meta Info */}
-                        <div className="flex items-center space-x-4 text-sm text-gray-500">
+                    <CardFooter className="pt-4 border-t border-gray-100">
+                      <div className="flex items-center justify-between w-full text-sm text-gray-500">
+                        <div className="flex items-center space-x-4">
                           <div className="flex items-center">
-                            <Calendar className="h-4 w-4 mr-1 text-purple-400" />
+                            <Calendar className="h-4 w-4 mr-1" />
                             {formatDate(article.publishedAt)}
                           </div>
                           <div className="flex items-center">
-                            <Clock className="h-4 w-4 mr-1 text-purple-400" />
-                            {article.readTime} 分钟
+                            <Clock className="h-4 w-4 mr-1" />
+                            {article.readTime} 分钟阅读
                           </div>
                         </div>
-
-                        {/* Read More Button */}
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            router.push(`/articles/${article.id}`);
-                          }}
-                          className="text-purple-600 hover:text-purple-700 hover:bg-purple-50 p-2 opacity-0 group-hover:opacity-100 transition-all duration-300 rounded-xl"
-                        >
-                          <ArrowRight className="h-4 w-4" />
-                        </Button>
+                        <div className="flex items-center text-purple-600 group-hover:text-purple-700 transition-colors">
+                          <span className="text-sm font-medium">阅读更多</span>
+                          <ArrowRight className="h-4 w-4 ml-1 group-hover:transform group-hover:translate-x-1 transition-transform" />
+                        </div>
                       </div>
                     </CardFooter>
                   </Card>
@@ -262,47 +252,34 @@ export default function ArticleGrid({ selectedCategory, selectedTags, currentLan
 
             {/* Load More Button */}
             {hasMore && (
-              <div className="text-center animate-fade-in">
+              <div className="text-center animate-fade-in" style={{ animationDelay: `${0.4 + visibleArticles.length * 0.1}s` }}>
                 <Button
                   onClick={() => setVisibleCount(prev => prev + 6)}
-                  variant="outline"
-                  size="lg"
-                  className="apple-hover px-8 py-4 border-2 border-purple-400 text-purple-600 hover:bg-purple-50 hover:border-purple-500 rounded-2xl font-medium bg-white/60 backdrop-blur-sm shadow-lg hover:shadow-purple-200/50"
+                  className="apple-hover bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-medium px-8 py-4 rounded-2xl shadow-lg hover:shadow-purple-300/50 border-0 transition-all duration-300"
                 >
-                  加载更多文章 ({filteredArticles.length - visibleCount} 篇)
+                  加载更多文章
+                  <SortDesc className="ml-2 h-5 w-5" />
                 </Button>
               </div>
             )}
           </>
         ) : (
-          /* Empty State */
           <div className="text-center py-16 animate-fade-in">
-            <div className="mb-8">
-              <div className="w-24 h-24 bg-purple-100 rounded-full mx-auto flex items-center justify-center">
-                <Tag className="h-8 w-8 text-purple-400" />
-              </div>
-            </div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-4">
-              暂无相关文章
-            </h3>
-            <p className="text-gray-600 mb-8">
-              尝试调整搜索关键词、选择其他分类或标签来查看更多内容
-            </p>
-            <div className="flex justify-center gap-4">
-                              <Button
-                  variant="outline"
-                  onClick={() => {
-                    setSearchQuery('');
-                  }}
-                  className="apple-hover border-2 border-purple-400 text-purple-600 hover:bg-purple-50 hover:border-purple-500 rounded-2xl px-6 py-3 font-medium bg-white/60 backdrop-blur-sm"
-                >
-                  重置搜索
-                </Button>
-            </div>
+            <div className="text-6xl mb-4">📝</div>
+            <h3 className="text-2xl font-semibold text-gray-900 mb-4">没有找到相关文章</h3>
+            <p className="text-gray-600 mb-8">试试调整筛选条件或搜索关键词</p>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setSearchQuery('');
+                // 这里可以触发父组件重置筛选条件
+              }}
+              className="apple-hover border-2 border-purple-300 hover:border-purple-400 text-purple-700 hover:text-purple-800 hover:bg-purple-50 font-medium px-6 py-3 rounded-2xl"
+            >
+              清除所有筛选
+            </Button>
           </div>
         )}
-
-
       </div>
     </section>
   );

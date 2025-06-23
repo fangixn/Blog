@@ -1,12 +1,11 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Clock, Calendar, Tag, ArrowLeft, Share2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { type Article } from '@/lib/data';
-import { Language, defaultLanguage } from '@/lib/i18n';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 
@@ -17,18 +16,6 @@ interface ArticlePageClientProps {
 
 export default function ArticlePageClient({ article, relatedArticles }: ArticlePageClientProps) {
   const router = useRouter();
-  const [currentLanguage, setCurrentLanguage] = useState<Language>(defaultLanguage);
-
-  useEffect(() => {
-    // 从URL参数获取语言设置
-    if (typeof window !== 'undefined') {
-      const urlParams = new URLSearchParams(window.location.search);
-      const langParam = urlParams.get('lang') as Language;
-      if (langParam && ['zh', 'en', 'de', 'ja', 'ko'].includes(langParam)) {
-        setCurrentLanguage(langParam);
-      }
-    }
-  }, []);
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('zh-CN', {
@@ -69,24 +56,20 @@ export default function ArticlePageClient({ article, relatedArticles }: ArticleP
 
   return (
     <div className="min-h-screen bg-white">
-      <Header 
-        currentLanguage={currentLanguage}
-        onLanguageChange={(lang) => {
-          setCurrentLanguage(lang);
-          if (typeof window !== 'undefined') {
-            const url = new URL(window.location.href);
-            url.searchParams.set('lang', lang);
-            window.history.pushState({}, '', url.toString());
-          }
-        }}
-      />
+      <Header />
       
       <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Back Button */}
         <div className="mb-8">
           <Button
             variant="ghost"
-            onClick={() => router.back()}
+            onClick={() => {
+              if (window.history.length > 1) {
+                router.back();
+              } else {
+                router.push('/');
+              }
+            }}
             className="text-purple-600 hover:text-purple-700 hover:bg-purple-50 rounded-2xl"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
@@ -153,38 +136,15 @@ export default function ArticlePageClient({ article, relatedArticles }: ArticleP
           </div>
         </header>
 
-        {/* Translation Quality Notice */}
-        {currentLanguage !== 'zh' && (
-          <div className="mb-8 p-4 bg-gradient-to-r from-purple-50 to-blue-50 border border-purple-200 rounded-2xl">
-            <div className="flex items-start space-x-3">
-              <div className="flex-shrink-0 mt-1">
-                <span className="text-lg">🌐</span>
-              </div>
-              <div className="flex-1">
-                <p className="text-sm text-purple-700 mb-2">
-                  <strong>翻译说明：</strong>本文内容为AI翻译，可能存在不准确之处。
-                </p>
-                <a
-                  href="https://www.translationcompare.com/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center text-sm text-purple-600 hover:text-purple-700 transition-colors font-medium"
-                >
-                  <span>访问 TranslationCompare 获取更优质的翻译服务</span>
-                  <svg className="ml-1 h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                  </svg>
-                </a>
-              </div>
-            </div>
-          </div>
-        )}
-
         {/* Article Content */}
-        <div className="prose prose-lg max-w-none">
+        <div className="prose max-w-none">
           <div 
             className="text-gray-800 leading-relaxed space-y-6"
             dangerouslySetInnerHTML={{ __html: article.content }}
+            style={{
+              fontSize: '1rem',
+              lineHeight: '1.75'
+            }}
           />
         </div>
 
@@ -202,19 +162,25 @@ export default function ArticlePageClient({ article, relatedArticles }: ArticleP
                   <CardContent className="p-6">
                     <Badge 
                       variant="secondary" 
-                      className="bg-purple-100 text-purple-700 rounded-2xl px-3 py-1 text-xs font-medium mb-3"
+                      className="bg-purple-100 text-purple-700 rounded-2xl px-3 py-1 font-medium mb-4"
                     >
                       {getCategoryName(relatedArticle.category)}
                     </Badge>
-                    <h3 className="font-semibold text-gray-900 mb-3 line-clamp-2 hover:text-purple-600 transition-colors">
+                    
+                    <h3 className="text-lg font-semibold text-gray-900 mb-3 line-clamp-2">
                       {relatedArticle.title}
                     </h3>
+                    
                     <p className="text-gray-600 text-sm line-clamp-3 mb-4">
                       {relatedArticle.excerpt}
                     </p>
-                    <div className="flex items-center text-xs text-gray-500">
-                      <Clock className="h-3 w-3 mr-1" />
-                      {relatedArticle.readTime} 分钟
+                    
+                    <div className="flex items-center justify-between text-sm text-gray-500">
+                      <div className="flex items-center">
+                        <Clock className="h-4 w-4 mr-1" />
+                        {relatedArticle.readTime} 分钟
+                      </div>
+                      <span className="text-purple-600 group-hover:text-purple-700">阅读 →</span>
                     </div>
                   </CardContent>
                 </Card>
@@ -224,7 +190,7 @@ export default function ArticlePageClient({ article, relatedArticles }: ArticleP
         )}
       </article>
 
-      <Footer currentLanguage={currentLanguage} />
+      <Footer />
     </div>
   );
 } 

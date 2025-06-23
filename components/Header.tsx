@@ -1,19 +1,9 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { Menu, X, Search } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import LanguageSwitcher from '@/components/LanguageSwitcher';
-import { Language, defaultLanguage, getTranslation } from '@/lib/i18n';
 
-interface HeaderProps {
-  currentLanguage?: Language;
-  onLanguageChange?: (language: Language) => void;
-}
-
-export default function Header({ 
-  currentLanguage = defaultLanguage, 
-  onLanguageChange 
-}: HeaderProps) {
+export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
 
@@ -26,10 +16,10 @@ export default function Header({
   }, []);
 
   const menuItems = [
-    { name: '首页', href: '#home' },
-    { name: '文章', href: '#articles' },
-    { name: '项目', href: '#projects' },
-    { name: '关于', href: '#about' },
+    { name: '首页', href: '/' },
+    { name: '文章', href: '/#articles' },
+    { name: '项目', href: '/#projects' },
+    { name: '关于', href: '/#about' },
   ];
 
   return (
@@ -45,10 +35,10 @@ export default function Header({
           {/* Logo */}
           <div className="flex items-center">
             <a 
-              href="#home" 
+              href="/" 
               className="text-xl lg:text-2xl font-bold text-gray-900 hover:text-purple-600 transition-all duration-300 apple-hover"
             >
-              {getTranslation(currentLanguage, 'site.title')}
+              方馨的博客
             </a>
           </div>
 
@@ -66,25 +56,8 @@ export default function Header({
             ))}
           </nav>
 
-          {/* Language Switcher, Search & Mobile Menu */}
-          <div className="flex items-center space-x-4">
-            {/* Language Switcher */}
-            <LanguageSwitcher 
-              currentLanguage={currentLanguage}
-              onLanguageChange={onLanguageChange}
-            />
-            
-            <Button
-              variant="ghost"
-              size="sm"
-              className="hidden sm:flex items-center space-x-2 text-gray-600 hover:text-purple-600 hover:bg-purple-50 rounded-xl transition-all duration-300"
-              onClick={() => document.getElementById('articles')?.scrollIntoView({ behavior: 'smooth' })}
-            >
-              <Search className="h-4 w-4" />
-              <span className="text-sm">搜索</span>
-            </Button>
-            
-            {/* Mobile menu button */}
+          {/* Mobile Menu Button */}
+          <div className="flex items-center">
             <Button
               variant="ghost"
               size="sm"
@@ -114,31 +87,6 @@ export default function Header({
                   {item.name}
                 </a>
               ))}
-              <div className="px-2 pt-2 space-y-2">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="w-full justify-start text-gray-600 hover:text-purple-600 hover:bg-purple-50 rounded-xl transition-all duration-300"
-                  onClick={() => {
-                    setIsMenuOpen(false);
-                    document.getElementById('articles')?.scrollIntoView({ behavior: 'smooth' });
-                  }}
-                >
-                  <Search className="h-4 w-4 mr-2" />
-                  搜索文章
-                </Button>
-                
-                {/* 移动端语言切换器 */}
-                <div className="px-2">
-                  <LanguageSwitcher 
-                    currentLanguage={currentLanguage}
-                    onLanguageChange={(lang) => {
-                      onLanguageChange?.(lang);
-                      setIsMenuOpen(false);
-                    }}
-                  />
-                </div>
-              </div>
             </div>
           </div>
         )}

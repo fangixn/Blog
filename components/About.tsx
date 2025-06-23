@@ -3,13 +3,7 @@ import { Heart, BookOpen, Code, TrendingUp, Coffee, MapPin } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 
-import { Language, defaultLanguage } from '@/lib/i18n';
-
-interface AboutProps {
-  currentLanguage?: Language;
-}
-
-export default function About({ currentLanguage = defaultLanguage }: AboutProps) {
+export default function About() {
   const skills = [
     '经济学理论', '计量经济学', 'Python', 'JavaScript', 'React', 'Next.js',
     '机器学习', '数据分析', 'AI应用开发', 'Web开发', '学术研究', '项目管理'

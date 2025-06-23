@@ -1,14 +1,8 @@
 'use client';
-import { Mail, Github, Linkedin, Heart, ArrowUp } from 'lucide-react';
+import { Mail, Heart, ArrowUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
-import { Language, defaultLanguage } from '@/lib/i18n';
-
-interface FooterProps {
-  currentLanguage?: Language;
-}
-
-export default function Footer({ currentLanguage = defaultLanguage }: FooterProps) {
+export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   const scrollToTop = () => {
@@ -16,17 +10,17 @@ export default function Footer({ currentLanguage = defaultLanguage }: FooterProp
   };
 
   const quickLinks = [
-    { name: '首页', href: '#home' },
-    { name: '文章', href: '#articles' },
-    { name: '项目', href: '#projects' },
-    { name: '关于', href: '#about' },
+    { name: '首页', href: '/' },
+    { name: '文章', href: '/#articles' },
+    { name: '项目', href: '/#projects' },
+    { name: '关于', href: '/#about' },
   ];
 
   const categories = [
-    { name: '经济学思考', href: '#articles' },
-    { name: '学习笔记', href: '#articles' },
-    { name: 'AI观察', href: '#articles' },
-    { name: '随笔杂谈', href: '#articles' },
+    { name: '经济学思考', href: '/#articles' },
+    { name: '学习笔记', href: '/#articles' },
+    { name: 'AI观察', href: '/#articles' },
+    { name: '随笔杂谈', href: '/#articles' },
   ];
 
   return (
@@ -37,7 +31,9 @@ export default function Footer({ currentLanguage = defaultLanguage }: FooterProp
           {/* Brand Section */}
           <div className="lg:col-span-2">
             <div className="mb-6">
-              <h3 className="text-2xl font-bold mb-3">方馨的博客</h3>
+              <a href="/" className="text-2xl font-bold mb-3 inline-block hover:text-purple-400 transition-colors">
+                方馨的博客
+              </a>
               <p className="text-gray-400 text-lg font-medium mb-4">
                 思想的记录器，代码的操作者
               </p>
@@ -48,32 +44,26 @@ export default function Footer({ currentLanguage = defaultLanguage }: FooterProp
             </div>
 
             {/* Social Links */}
-            <div className="flex space-x-4">
-              <a
-                href="mailto:fangin1230@gmail.com"
-                className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-purple-600 transition-colors duration-200 group"
-                title="邮箱联系"
-              >
-                <Mail className="h-5 w-5 group-hover:scale-110 transition-transform" />
-              </a>
-              <a
-                href="https://github.com/fangixn"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-purple-600 transition-colors duration-200 group"
-                title="GitHub"
-              >
-                <Github className="h-5 w-5 group-hover:scale-110 transition-transform" />
-              </a>
-              <a
-                href="https://www.linkedin.com/in/fangxin1230"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-purple-600 transition-colors duration-200 group"
-                title="领英"
-              >
-                <Linkedin className="h-5 w-5 group-hover:scale-110 transition-transform" />
-              </a>
+            <div className="flex flex-col space-y-4">
+              <h4 className="text-lg font-semibold text-white">联系方式</h4>
+              <div className="flex items-center space-x-3">
+                <a
+                  href="mailto:fangin1230@gmail.com"
+                  className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-purple-600 transition-colors duration-200 group"
+                  title="邮箱联系"
+                >
+                  <Mail className="h-5 w-5 group-hover:scale-110 transition-transform" />
+                </a>
+                <div className="flex flex-col">
+                  <span className="text-gray-300 text-sm">邮箱</span>
+                  <a 
+                    href="mailto:fangin1230@gmail.com"
+                    className="text-purple-400 hover:text-purple-300 transition-colors text-sm"
+                  >
+                    fangin1230@gmail.com
+                  </a>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -114,8 +104,6 @@ export default function Footer({ currentLanguage = defaultLanguage }: FooterProp
 
         {/* Divider */}
         <div className="border-t border-gray-800 my-12"></div>
-
-
 
         {/* Bottom Section */}
         <div className="flex flex-col md:flex-row items-center justify-between pt-8 border-t border-gray-800">
