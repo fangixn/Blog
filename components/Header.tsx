@@ -3,12 +3,19 @@ import { useState, useEffect } from 'react';
 import { Menu, X, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
-import { Language, defaultLanguage } from '@/lib/i18n';
+import { Language, defaultLanguage, getTranslation } from '@/lib/i18n';
 
-export default function Header() {
+interface HeaderProps {
+  currentLanguage?: Language;
+  onLanguageChange?: (language: Language) => void;
+}
+
+export default function Header({ 
+  currentLanguage = defaultLanguage, 
+  onLanguageChange 
+}: HeaderProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [currentLanguage, setCurrentLanguage] = useState<Language>(defaultLanguage);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -41,7 +48,7 @@ export default function Header() {
               href="#home" 
               className="text-xl lg:text-2xl font-bold text-gray-900 hover:text-purple-600 transition-all duration-300 apple-hover"
             >
-              方馨的博客
+              {getTranslation(currentLanguage, 'site.title')}
             </a>
           </div>
 
@@ -64,7 +71,7 @@ export default function Header() {
             {/* Language Switcher */}
             <LanguageSwitcher 
               currentLanguage={currentLanguage}
-              onLanguageChange={setCurrentLanguage}
+              onLanguageChange={onLanguageChange}
             />
             
             <Button
@@ -126,7 +133,7 @@ export default function Header() {
                   <LanguageSwitcher 
                     currentLanguage={currentLanguage}
                     onLanguageChange={(lang) => {
-                      setCurrentLanguage(lang);
+                      onLanguageChange?.(lang);
                       setIsMenuOpen(false);
                     }}
                   />

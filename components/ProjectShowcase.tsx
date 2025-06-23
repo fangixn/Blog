@@ -5,8 +5,13 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { projects } from '@/lib/data';
+import { Language, defaultLanguage } from '@/lib/i18n';
 
-export default function ProjectShowcase() {
+interface ProjectShowcaseProps {
+  currentLanguage?: Language;
+}
+
+export default function ProjectShowcase({ currentLanguage = defaultLanguage }: ProjectShowcaseProps) {
   const [hoveredProject, setHoveredProject] = useState<string | null>(null);
 
   const featuredProjects = projects.filter(project => project.featured);
@@ -210,17 +215,7 @@ export default function ProjectShowcase() {
           </div>
         )}
 
-        {/* CTA Section */}
-        <div className="text-center mt-16">
-          <div className="bg-white rounded-2xl p-8 shadow-lg border border-purple-200">
-            <h3 className="text-xl font-semibold text-gray-900 mb-4">
-              有想法？让我们一起探讨
-            </h3>
-            <p className="text-gray-600 mb-6">
-              这些项目展示了经济学理论与技术实践的结合，希望能为学术研究和实际应用带来价值
-            </p>
-          </div>
-        </div>
+
       </div>
     </section>
   );

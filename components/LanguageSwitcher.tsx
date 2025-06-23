@@ -80,11 +80,20 @@ export default function LanguageSwitcher({
               ))}
             </div>
             
-            {/* 翻译说明 */}
-            <div className="border-t border-gray-100 px-4 py-2">
+            {/* 翻译说明和质量提升 */}
+            <div className="border-t border-gray-100 px-4 py-3 space-y-2">
               <p className="text-xs text-gray-500">
                 🤖 非中文内容使用AI翻译
               </p>
+              <a
+                href="https://www.translationcompare.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-between text-xs text-purple-600 hover:text-purple-700 transition-colors group"
+              >
+                <span>✨ 获取更好的翻译质量</span>
+                <span className="opacity-0 group-hover:opacity-100 transition-opacity">→</span>
+              </a>
             </div>
           </div>
         </>

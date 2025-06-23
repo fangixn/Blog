@@ -2,7 +2,13 @@
 import { Mail, Github, Linkedin, Heart, ArrowUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
-export default function Footer() {
+import { Language, defaultLanguage } from '@/lib/i18n';
+
+interface FooterProps {
+  currentLanguage?: Language;
+}
+
+export default function Footer({ currentLanguage = defaultLanguage }: FooterProps) {
   const currentYear = new Date().getFullYear();
 
   const scrollToTop = () => {
