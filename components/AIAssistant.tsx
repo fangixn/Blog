@@ -109,54 +109,60 @@ export default function AIAssistant({ articles }: AIAssistantProps) {
         }
       }
 
-      // 构建请求头，将API密钥放在头部
-      const headers: Record<string, string> = {
-        'Content-Type': 'application/json',
-      };
-
-      // 为每个提供商添加API密钥到头部
-      Object.entries(apiKeys).forEach(([provider, key]) => {
-        if (key && key.trim()) {
-          headers[`x-${provider}-key`] = key;
+      // 使用客户端AI库
+      const { chatWithAI, compareChat, KNOWLEDGE_BASE, AI_PROVIDERS } = await import('@/lib/aiClient');
+      
+      let result: any;
+      
+      if (compareMode) {
+        // 对比模式
+        result = await compareChat(apiKeys, inputMessage, KNOWLEDGE_BASE);
+      } else {
+        // 单一模式：选择优先级最高的可用提供商
+        const availableProviders = Object.keys(AI_PROVIDERS).filter(provider => apiKeys[provider]);
+        
+        if (availableProviders.length === 0) {
+          throw new Error('未配置任何AI API密钥');
         }
-      });
 
-      // 调用AI API（新格式）
-      const response = await fetch('/api/ai-chat', {
-        method: 'POST',
-        headers,
-        body: JSON.stringify({
-          message: inputMessage,
-          compareMode: compareMode
-        }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'AI助手暂时无法回答，请稍后再试');
+        const primaryProvider = availableProviders[0];
+        result = await chatWithAI(primaryProvider, apiKeys[primaryProvider], inputMessage, KNOWLEDGE_BASE);
+        
+        if (!result.success && availableProviders.length > 1) {
+          // 尝试备用提供商
+          const backupProvider = availableProviders[1];
+          const backupResult = await chatWithAI(backupProvider, apiKeys[backupProvider], inputMessage, KNOWLEDGE_BASE);
+          if (backupResult.success) {
+            result = { ...backupResult, isBackup: true, provider: AI_PROVIDERS[backupProvider].name };
+          }
+        } else if (result.success) {
+          result.provider = AI_PROVIDERS[primaryProvider].name;
+        }
       }
-
-      const data = await response.json();
       
       let assistantContent = '';
       
-      if (data.compareMode) {
+      if (result.compareMode) {
         // 对比模式响应
         assistantContent = '🔍 **多AI对比回答**\n\n';
-        data.results?.forEach((result: any, index: number) => {
-          if (result.success) {
-            assistantContent += `**${result.provider}:**\n${result.content}\n\n`;
+        result.results?.forEach((res: any) => {
+          if (res.success) {
+            assistantContent += `**${res.provider}:**\n${res.content}\n\n`;
           } else {
-            assistantContent += `**${result.provider}:** ❌ ${result.error}\n\n`;
+            assistantContent += `**${res.provider}:** ❌ ${res.error}\n\n`;
           }
         });
-        assistantContent += `📊 成功: ${data.summary?.successful}/${data.summary?.total}`;
+        assistantContent += `📊 成功: ${result.summary?.successful}/${result.summary?.total}`;
       } else {
         // 单一模式响应
-        assistantContent = data.reply;
-        if (data.provider) {
-          assistantContent += `\n\n*由 ${data.provider} 提供回答*`;
-          if (data.isBackup) {
+        if (!result.success) {
+          throw new Error(result.error || 'AI助手暂时无法回答，请稍后再试');
+        }
+        
+        assistantContent = result.content;
+        if (result.provider) {
+          assistantContent += `\n\n*由 ${result.provider} 提供回答*`;
+          if (result.isBackup) {
             assistantContent += ` (备用)`;
           }
         }

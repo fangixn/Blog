@@ -91,52 +91,30 @@ export default function AISettings({ onConfigChange, onClose }: AISettingsProps)
     setTestResults(prev => ({ ...prev, [provider]: 'testing' }));
 
     try {
-      const response = await fetch('/api/ai-chat/test', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          provider,
-          apiKey: key,
-        }),
-      });
-
-      let responseData;
-      try {
-        const responseText = await response.text();
-        if (responseText.trim()) {
-          responseData = JSON.parse(responseText);
-        } else {
-          throw new Error('服务器返回空响应');
-        }
-      } catch (parseError) {
-        console.error(`${provider} 响应解析失败:`, parseError);
-        setTestResults(prev => ({ ...prev, [provider]: 'error' }));
-        alert(`测试失败: 服务器响应格式错误\n请检查网络连接或稍后重试`);
-        return;
-      }
-
-      if (response.ok && responseData) {
-        console.log(`${provider} 测试成功:`, responseData);
+      // 动态导入客户端库
+      const { testProvider } = await import('@/lib/aiClient');
+      
+      const result = await testProvider(provider, key);
+      
+      if (result.success) {
+        console.log(`${provider} 测试成功:`, result);
         setTestResults(prev => ({ ...prev, [provider]: 'success' }));
         
         // 显示成功信息
-        if (responseData.response && responseData.response !== '连接成功') {
-          alert(`连接成功！\n回应: ${responseData.response.slice(0, 100)}...`);
+        if (result.response && result.response !== '连接成功') {
+          alert(`连接成功！\n回应: ${result.response.slice(0, 100)}...`);
         }
       } else {
-        console.error(`${provider} 测试失败:`, responseData);
+        console.error(`${provider} 测试失败:`, result);
         setTestResults(prev => ({ ...prev, [provider]: 'error' }));
         
         // 显示详细错误信息
-        const errorMsg = responseData?.error || `HTTP ${response.status} 错误`;
-        alert(`测试失败: ${errorMsg}\n\n💡 常见解决方案:\n• 检查API密钥是否正确\n• 确认账户有足够余额\n• 检查网络连接`);
+        alert(`测试失败: ${result.error}\n\n💡 常见解决方案:\n• 检查API密钥是否正确\n• 确认账户有足够余额\n• 检查网络连接\n• 某些API可能需要科学上网`);
       }
     } catch (error) {
       console.error(`${provider} 测试异常:`, error);
       setTestResults(prev => ({ ...prev, [provider]: 'error' }));
-      alert(`网络错误: ${error instanceof Error ? error.message : '连接失败'}`);
+      alert(`网络错误: ${error instanceof Error ? error.message : '连接失败'}\n请检查网络连接或稍后重试`);
     }
   };
 
