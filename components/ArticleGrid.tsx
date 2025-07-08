@@ -74,11 +74,16 @@ export default function ArticleGrid({ selectedCategory, selectedTags, initialArt
 
   const getCategoryName = (categoryId: string) => {
     const categoryMap: { [key: string]: string } = {
-      economics: '经济学思考',
-      notes: '学习笔记',
-      projects: '项目展示',
-      ai: 'AI观察',
-      thoughts: '随笔杂谈',
+      business: '商业分析',
+      ai: 'AI观察', 
+      tech: '技术实践',
+      methodology: '学习方法论',
+      insights: '随笔洞察',
+      // 兼容旧分类名称
+      economics: '商业分析',
+      notes: '学习方法论',
+      projects: '技术实践',
+      thoughts: '随笔洞察',
     };
     return categoryMap[categoryId] || categoryId;
   };

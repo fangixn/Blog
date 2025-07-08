@@ -24,11 +24,11 @@ export interface Project {
 }
 
 export const categories = [
-  { id: 'economics', name: '经济学思考', icon: 'TrendingUp' },
-  { id: 'notes', name: '学习笔记', icon: 'BookOpen' },
-  { id: 'projects', name: '项目展示', icon: 'Code' },
+  { id: 'business', name: '商业分析', icon: 'TrendingUp' },
   { id: 'ai', name: 'AI观察', icon: 'Brain' },
-  { id: 'thoughts', name: '随笔杂谈', icon: 'PenTool' },
+  { id: 'tech', name: '技术实践', icon: 'Code' },
+  { id: 'methodology', name: '学习方法论', icon: 'BookOpen' },
+  { id: 'insights', name: '随笔洞察', icon: 'PenTool' },
 ];
 
 // 移除静态文章数据 - 现在只使用markdown文件

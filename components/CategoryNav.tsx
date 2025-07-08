@@ -46,10 +46,10 @@ export default function CategoryNav({
         {/* Section Header */}
         <div className="text-center mb-16">
           <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-6 animate-fade-in">
-            探索内容分类
+            探索多维度内容
           </h2>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto animate-slide-up" style={{ animationDelay: '0.2s' }}>
-            按分类浏览不同主题的文章，或使用标签筛选感兴趣的内容
+            从商业洞察到技术实践，从思维方法到深度思考，发现感兴趣的内容领域
           </p>
         </div>
 

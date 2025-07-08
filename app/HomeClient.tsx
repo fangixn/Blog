@@ -2,7 +2,6 @@
 import { useState } from 'react';
 import Header from '@/components/Header';
 import Hero from '@/components/Hero';
-import KnowledgePreview from '@/components/KnowledgePreview';
 import AIAssistantHome from '@/components/AIAssistantHome';
 import CategoryNav from '@/components/CategoryNav';
 import ArticleGrid from '@/components/ArticleGrid';
@@ -25,7 +24,6 @@ export default function HomeClient({ allArticles }: HomeClientProps) {
       <main>
         <Hero />
         <AIAssistantHome articles={allArticles} />
-        <KnowledgePreview />
         <CategoryNav
           selectedCategory={selectedCategory}
           onCategoryChange={setSelectedCategory}

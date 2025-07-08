@@ -9,7 +9,9 @@
     "lint": "next lint",
     "new-article": "node scripts/new-article.js",
     "article": "node scripts/new-article.js",
-    "list-articles": "node scripts/new-article.js"
+    "list-articles": "node scripts/new-article.js",
+    "generate-sitemap": "node scripts/generate-sitemap.js",
+    "sitemap": "node scripts/generate-sitemap.js"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",

@@ -19,14 +19,14 @@ export default function Hero() {
       <div className="max-w-5xl mx-auto text-center relative z-10">
         <div className="animate-fade-in">
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight">
-          用文字和代码<br />
+            深度思考<br />
             <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-              构建理想中的乌托邦
+              跨界实践
             </span>
           </h1>
           
           <p className="text-lg sm:text-xl text-gray-600 mb-10 max-w-3xl mx-auto leading-relaxed animate-slide-up" style={{ animationDelay: '0.2s' }}>
-            探索经济学理论与技术实践的交融
+            用理性分析商业世界，用技术探索无限可能，用文字记录成长轨迹
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16 animate-scale-in" style={{ animationDelay: '0.4s' }}>
@@ -63,11 +63,11 @@ export default function Hero() {
           <div className="animate-fade-in" style={{ animationDelay: '0.6s' }}>
             <div className="bg-white/60 backdrop-blur-md rounded-3xl p-8 shadow-lg border border-white/20 max-w-4xl mx-auto">
               <p className="text-gray-700 text-base sm:text-lg italic leading-relaxed">
-                "无论是对个人而言，还是对社会而言，在现代工业社会中，真正能促成生产的因素是一种概念，
-                也有人更愿意称之为'全局眼光'。"
+                "最有价值的知识是关于方法的知识，最有意义的学习是掌握学习的方法。
+                跨学科的思维模式，能让我们在复杂的世界中找到简单的原理。"
               </p>
               <p className="text-purple-600 font-semibold mt-4">
-                — 彼得·德鲁克
+                — 查理·芒格
               </p>
             </div>
           </div>
