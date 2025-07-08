@@ -143,7 +143,7 @@ export default function PWAInstaller() {
         </div>
         
         <p className="text-xs text-gray-600 mb-3 leading-relaxed">
-          将方馨博客添加到主屏幕，享受原生应用般的体验：离线阅读、快速启动、无浏览器界面。
+          将方馨博客-用文字和代码，构建理想中的乌托邦添加到主屏幕，享受原生应用般的体验：离线阅读、快速启动、无浏览器界面。
         </p>
         
         <div className="flex space-x-2">

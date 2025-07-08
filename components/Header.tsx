@@ -39,7 +39,7 @@ export default function Header() {
               href="/" 
               className="text-xl lg:text-2xl font-bold text-gray-900 hover:text-purple-600 transition-all duration-300 apple-hover"
             >
-              方馨的博客
+              方馨博客
             </a>
           </div>
 

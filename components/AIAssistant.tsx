@@ -128,7 +128,7 @@ export default function AIAssistant({ articles }: AIAssistantProps) {
         markdown += `---\n\n`;
       });
 
-      markdown += `*此聊天记录由方馨博客AI助手导出*`;
+      markdown += `*此聊天记录由方馨博客-用文字和代码，构建理想中的乌托邦AI助手导出*`;
 
       // 创建并下载文件
       const blob = new Blob([markdown], { type: 'text/markdown;charset=utf-8' });
@@ -483,7 +483,7 @@ export default function AIAssistant({ articles }: AIAssistantProps) {
                 </div>
               </CardTitle>
               <div className="flex items-center justify-between">
-                <p className="text-purple-100">基于方馨博客知识库的智能助手</p>
+                <p className="text-purple-100">基于方馨博客-用文字和代码，构建理想中的乌托邦知识库的智能助手</p>
                 {messages.length > 1 && (
                   <div className="flex items-center space-x-2 text-purple-200">
                     <History className="h-4 w-4" />
