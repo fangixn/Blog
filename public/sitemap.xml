@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <!-- 首页 -->
+  <!-- 首页 - 已优化布局：Hero → AI助手 → 知识库预览 → 文章 → 项目 → 关于我 -->
   <url>
     <loc>https://www.fangxin1230.com/</loc>
-    <lastmod>2024-12-20</lastmod>
+    <lastmod>2024-12-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   
-  <!-- 知识库页面 -->
+  <!-- 知识库页面 - AI助手已移至首页，知识库专注于深度学习功能 -->
   <url>
     <loc>https://www.fangxin1230.com/knowledge</loc>
-    <lastmod>2024-12-20</lastmod>
+    <lastmod>2024-12-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>

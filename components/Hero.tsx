@@ -1,7 +1,7 @@
 'use client';
 import { ChevronDown, Github, Mail, Linkedin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, Globe } from 'lucide-react';
+import { ArrowRight, Globe, Brain } from 'lucide-react';
 
 export default function Hero() {
   const scrollToArticles = () => {
@@ -38,6 +38,16 @@ export default function Hero() {
               文章
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
+            
+                         <Button 
+               variant="outline" 
+               size="lg"
+               className="apple-hover border-2 border-indigo-300 hover:border-indigo-400 text-indigo-700 hover:text-indigo-800 hover:bg-indigo-50 font-medium px-8 py-4 rounded-2xl backdrop-blur-sm bg-white/60"
+               onClick={() => window.location.href = '/knowledge'}
+             >
+               <Brain className="mr-2 h-5 w-5" />
+               知识库
+             </Button>
             
             <Button 
               variant="outline" 
